@@ -1,6 +1,6 @@
-% Matlab function for the pvput using the P4P pythone module  in the MATLAB 2020a
+%% Matlab function for the pvput using the P4P pythone module  in the MATLAB 2020a
 function MatP4Pput(pvname, varargin)
-%% MatP4Pput returns the values of given EPICS PV names.
+%% MatP4Pput displays the previous and updated values of given EPICS PV names.
 %
 % INPUTS:
 %    pvname               A PV name
@@ -9,7 +9,6 @@ function MatP4Pput(pvname, varargin)
 
 % Bring P4P python module into Matlab
 MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));
-% MatP4P = py.p4p.client.thread.Context('pva');
 
 % Old PV for debugging purpose
 fprintf('The old PV is');
@@ -23,24 +22,12 @@ nt_id = string(getID(PV));
 % Check the type of PV
 t = class(PV);
 
-% % For debugging purpose
-% fprintf('Input = ')
-% fprintf('%s, ', varargin{1}(1:end-1))
-% fprintf('%s\n\n', varargin{1}(end))
-
-% For dubugging purpose
-% fprintf('Number of input arguments: %d\n\n', nargin)
 
 % NTScalarArrays
 if (contains(nt_id, "NTScalarArray"))
     data = num2cell(varargin{1});
-    
-%     Debugging purpose
-%     class(data);
-
-    MatP4P.put(pvname, data);
-    
-
+   MatP4P.put(pvname, data);
+   
 elseif (contains(nt_id, "NTScalar"))
     % Scalar PVs
     MatP4P.put(pvname, varargin{1});
@@ -48,9 +35,8 @@ elseif (contains(nt_id, "NTScalar"))
   
 % NTTable PVs    
 elseif (contains(nt_id, "NTTable"))
-%     For debugging purpose
-%     varargin{1}
     c = class(varargin{1});
+    
     % NTStruct inputs
     if (c == "struct")
         str = "pyargs(";
@@ -71,9 +57,7 @@ elseif (contains(nt_id, "NTTable"))
         str = str + "fields{" + numel(fields) + "}, " + "num2cell(varargin{1}." + fields(numel(fields)) + "'))";
         MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));         
         
-    else
-        %     Number of elements in each field
-        %     k=numel(varargin{2})      
+    else   
         str = "pyargs(";
         for i=1:1:(nargin-2)    % total number of inputs - 2 (one is PV name and the other is for the last inputs)
             if (rem(i,2)==1)

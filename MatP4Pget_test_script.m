@@ -1,6 +1,4 @@
-% Matlab script to test MatP4Pput.m
-% MatP4P = py.p4p.client.thread.Context('pva');
-% MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));
+% Matlab script to test MatP4Pget function
 
 % Scalar PVs
 [PV, ts, alarm] = MatP4Pget("TEST:PVA:IntValue")

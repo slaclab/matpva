@@ -1,4 +1,4 @@
-% Matlab function for the pvget using the P4P pythone module  in the MATLAB 2020a
+%% Matlab function for the pvget using the P4P pythone module  in the MATLAB 2020a
 function varargout = MatP4Pget(pvname)
 %% MatP4Pget returns the values of given EPICS PV names.
 %
@@ -8,7 +8,6 @@ function varargout = MatP4Pget(pvname)
 
 % Bring P4P python module into Matlab
 MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));
-% MatP4P = py.p4p.client.thread.Context('pva');
 
 PV = MatP4P.get(pvname);
 
@@ -18,17 +17,18 @@ nt_id = string(getID(PV));
 % Check the type of PV
 t = struct(py.dict(type(PV))).value;
 
-% timeStamp
+% To have timeStamp information in human readable form
 TimeInSeconds = double(int64(struct(struct(todict(PV)).timeStamp).secondsPastEpoch));
 NanoSec = double(int64(struct(struct(todict(PV)).timeStamp).nanoseconds))/10^9;
-ts=datetime(TimeInSeconds-8*3600+NanoSec, 'ConvertFrom', 'epochtime', 'Epoch', '1970-01-01', 'Format', 'MMM dd, yyyy HH:mm:ss.SSS'); 
+% P4P time is based on 1970-01-01 and California time is GMT-8 
+ts=datetime(TimeInSeconds-8*3600+NanoSec, 'ConvertFrom', 'epochtime', 'Epoch', '1970-01-01', 'Format', 'MMM dd, yyyy HH:mm:ss.SSS');
 
-% alarm
+% To have alarm information
 alarm.severity = int32(int64(struct(struct(todict(PV)).alarm).severity));
 alarm.status = int32(int64(struct(struct(todict(PV)).alarm).status));
 alarm.message = string(struct(struct(todict(PV)).alarm).message);
 
-% NTScalarArrays
+% NTScalarArrays data type PVs
 if (contains(nt_id, "NTScalarArray"))
     if (t == 'ai')
         ret = int32(py.array.array('i',struct(todict(PV)).value));    
@@ -60,7 +60,7 @@ if (contains(nt_id, "NTScalarArray"))
     varargout{2} = ts;
     varargout{3} = alarm;    
 
-% NTScalar PVs
+% NTScalar data type PVs
 elseif (contains(nt_id, "NTScalar"))
     if (t == 'i')
         ret = int32(int64(struct(todict(PV)).value));
@@ -92,7 +92,7 @@ elseif (contains(nt_id, "NTScalar"))
     varargout{2} = ts;
     varargout{3} = alarm;   
 
-% NTTable PVs    
+% NTTable data type PVs    
 elseif (contains(nt_id, "NTTable"))
     a = struct(todict(PV)).labels;
     aa = string(cell(a));
@@ -142,7 +142,7 @@ elseif (contains(nt_id, "NTTable"))
             vv2 = string(cell(v))';
         end
         eval("NTStruct." + aa(i) + "= vv;");
-        eval("NTStruct2." + aa(i) + "= vv2;");
+        eval("NTStruct2." + aa(i) + "= vv2;");  % To make NTTable ourput with each element data in a column instead of in a row
     end
     
     NTTable = struct2table(NTStruct2);
