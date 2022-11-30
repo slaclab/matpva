@@ -9,7 +9,7 @@ Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPI
 - p4p: 4.1.4+
 - Matlab: 2020a+
 
-> **Note**: Although MatP4P is tested in Python 3.8.13, p4p 4.1.4, Matlab 2020a, there are still chances that some previous versions still work.
+> **Note**: Although MatP4P is tested in Python 3.8.13, p4p 4.1.4, Matlab 2020a, there are still chances that some previous versions might work.
 
 ## Function and test scripts
 Python scripts to run Test PVs: pva_testing_ioc.py, matlab_model_pvs.py
