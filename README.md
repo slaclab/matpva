@@ -1,4 +1,4 @@
-# MatP4P: Integrate EPICS7 into MATLAB using PVAccess for Python (P4P) module
+# matPva: Integrate EPICS7 into MATLAB using PVAccess for Python (P4P) module
 
 ## Motivation
 Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPICS7 in the MATLAB environment. There were some efforts to integrate EPICS into MATLAB such as eget and labca. But, they are based on Java, and although PVAcess recommends JDK 8 or higher, MATLAB 2020a uses Java version 1.8 in the SLAC network. Therefore, MatP4P is developed to integrate EPICS7 into MATLAB based on Python using the P4P module to use PVAcess.
