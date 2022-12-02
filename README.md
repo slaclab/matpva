@@ -14,7 +14,7 @@ Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPI
 ## Function and test scripts
 Python scripts to run Test PVs: pva_testing_ioc.py, matlab_model_pvs.py
 
-MATLAB scripts to test MatP4Pput() and MatP4Pget(): MatP4Pget_test_script.m, MatP4Pput_test_script.m 
+MATLAB scripts to test mpvaGet() and mpvaPut(): mpvaGet_test_script.m, mpvaPut_test_script.m 
 <br /><br />
 
 ## Running test scripts
@@ -24,17 +24,17 @@ python matlab_model_pvs.py   # TWISS NTTable PV
 ```
 
 ## How to use
-1. MatP4Pget
+1. mpvaGet
 ```
-[PV, ts, alarm] = MatP4Pget(pvname)     # PV is NTScalar or NTScalarArray type.
-[NTTable, NTStruct, ts, alarm] = MatP4Pget(pvname)      # PV is NTTable type     
+[PV, ts, alarm] = mpvaGet(pvname)     # PV is NTScalar or NTScalarArray type.
+[NTTable, NTStruct, ts, alarm] = mpvaGet(pvname)      # PV is NTTable type     
 ```
-2. MatP4Pput
+2. mpvaPut
 ```
-MatP4Pput(pvname, value)      # PV is NTScalar or NTScalarArray type.
-MatP4Pput(pvname, field1, value1, field2, value2, ...)      # PV is NTTable type
-MatP4Pput(pvname, struct/table)     # PV is NTTable type
+mpvaPut(pvname, value)      # PV is NTScalar or NTScalarArray type.
+mpvaPut(pvname, field1, value1, field2, value2, ...)      # PV is NTTable type
+mpvaPut(pvname, struct/table)     # PV is NTTable type
 ```
 
 ## Documnetation
-https://confluence.slac.stanford.edu/display/~ktkim/MatP4Pget+and+MatP4Pput%3A+Integrate+EPICS7+into+MATLAB+using+PVAccess+for+Python+%28P4P%29+module
+https://confluence.slac.stanford.edu/display/~ktkim/mpvaGet+and+mpvaPut%3A+Integrate+EPICS7+into+MATLAB+using+PVAccess+for+Python+%28P4P%29+module
