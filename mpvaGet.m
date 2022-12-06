@@ -146,10 +146,10 @@ elseif (contains(nt_id, "NTTable"))
     end
     
     NTTable = struct2table(NTStruct2);
-    varargout{1} = NTTable;
-    varargout{2} = NTStruct;
-    varargout{3} = ts;
-    varargout{4} = alarm;
+    varargout{1} = NTTable;    
+    varargout{2} = ts;
+    varargout{3} = alarm;
+    varargout{4} = NTStruct;
 
 % NTEnum data type PVs    
 elseif (contains(nt_id, "NTEnum"))

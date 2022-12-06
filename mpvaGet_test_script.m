@@ -33,7 +33,7 @@
 % Image = class(MatP4P.get('TEST:PVA:Image'))
 
 % NTTable
-[NTTable, NTStruct, ts, alarm] = mpvaGet("TEST:PVA:NTTable")
+[NTTable, ts, alarm, NTStruct] = mpvaGet("TEST:PVA:NTTable")
 
 % NTTable TWISS
-[NTTable, NTStruct, ts, alarm] =  mpvaGet("TBLEM:SYS0:1:CU_HXR:LIVE:TWISS")
+[NTTable, ts, alarm, NTStruct] =  mpvaGet("TBLEM:SYS0:1:CU_HXR:LIVE:TWISS")
