@@ -150,6 +150,16 @@ elseif (contains(nt_id, "NTTable"))
     varargout{2} = NTStruct;
     varargout{3} = ts;
     varargout{4} = alarm;
+    
+elseif (contains(nt_id, "NTEnum"))
+    idx = double(struct(struct(todict(PV)).value).index);
+    choice=string(cell(struct(struct(todict(PV)).value).choices));
+    ret = choice(idx);
+    
+    varargout{1} = ret;
+    varargout{2} = ts;
+    varargout{3} = alarm;
+    
 else
     fprintf("This PV data type is not supported yet.");
 end
