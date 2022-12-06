@@ -150,11 +150,12 @@ elseif (contains(nt_id, "NTTable"))
     varargout{2} = NTStruct;
     varargout{3} = ts;
     varargout{4} = alarm;
-    
+
+% NTEnum data type PVs    
 elseif (contains(nt_id, "NTEnum"))
     idx = double(struct(struct(todict(PV)).value).index);
     choice=string(cell(struct(struct(todict(PV)).value).choices));
-    ret = choice(idx);
+    ret = choice(idx+1);    % Convert Python style indexing to Matlab style indexing
     
     varargout{1} = ret;
     varargout{2} = ts;
