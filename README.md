@@ -19,21 +19,28 @@ MATLAB scripts to test mpvaGet() and mpvaPut(): mpvaGet_test_script.m, mpvaPut_t
 
 ## Running test scripts
 ```
-python pva_testing_ioc.py    # Most of PVs including NTScalar, NTScalarArray, NTTable data type
+python pva_testing_ioc.py    # Most of testing PVs including NTScalar, NTScalarArray, NTTable data type
 python matlab_model_pvs.py   # TWISS NTTable PV
 ```
 
 ## How to use
 1. mpvaGet
 ```
-[PV, ts, alarm] = mpvaGet(pvname)     # PV is NTScalar or NTScalarArray type.
-[NTTable, NTStruct, ts, alarm] = mpvaGet(pvname)      # PV is NTTable type     
+[PV, ts, alarm] = mpvaGet(pvname)     # When PV is NTScalar or NTScalarArray type
+[NTTable, ts, alarm, NTStruct] = mpvaGet(pvname)      # When PV is NTTable type     
 ```
 2. mpvaPut
 ```
-mpvaPut(pvname, value)      # PV is NTScalar or NTScalarArray type.
-mpvaPut(pvname, field1, value1, field2, value2, ...)      # PV is NTTable type
-mpvaPut(pvname, struct/table)     # PV is NTTable type
+mpvaPut(pvname, value)      # When PV is NTScalar or NTScalarArray type
+mpvaPut(pvname, field1, value1, field2, value2, ...)      # When PV is NTTable type
+mpvaPut(pvname, struct/table)     # When PV is NTTable type
+```
+
+*Note: By default, mpvaPut doesn't display anything. If you would like to print out previous and updated PVs, add "mpvaDebugOn" as the last argument input of the function as shown below:
+```
+mpvaPut(pvname, value, "mpvaDebugOn")   # When PV is NTScalar or NTScalarArray type
+mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")     # When PV is NTTable type
+mpvaPut(pvname, struct/table,  "mpvaDebugOn")       # When PV is NTTable type
 ```
 
 ## Documnetation
