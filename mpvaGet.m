@@ -21,7 +21,8 @@ t = struct(py.dict(type(PV))).value;
 TimeInSeconds = double(int64(struct(struct(todict(PV)).timeStamp).secondsPastEpoch));
 NanoSec = double(int64(struct(struct(todict(PV)).timeStamp).nanoseconds))/10^9;
 % P4P time is based on 1970-01-01 and California time is GMT-8 
-ts=datetime(TimeInSeconds-8*3600+NanoSec, 'ConvertFrom', 'epochtime', 'Epoch', '1970-01-01', 'Format', 'MMM dd, yyyy HH:mm:ss.SSS');
+ts=datetime(TimeInSeconds, 'ConvertFrom', 'epochtime', 'Epoch', '1970-01-01', 'Format', 'MMM dd, yyyy HH:mm:ss.SSS', 'TimeZone', 'UTC');
+ts.TimeZone = 'America/Los_Angeles';    % Set your timezone
 
 % To have alarm information
 alarm.severity = int32(int64(struct(struct(todict(PV)).alarm).severity));
@@ -164,3 +165,8 @@ elseif (contains(nt_id, "NTEnum"))
 else
     fprintf("This PV data type is not supported yet.");
 end
+
+MatP4P.close();
+
+end
+

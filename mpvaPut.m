@@ -104,3 +104,7 @@ if (class(varargin{end}) == "string")
         updated_PV = mpvaGet(pvname)
     end
 end
+
+MatP4P.close();
+
+end
