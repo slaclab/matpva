@@ -6,10 +6,10 @@ Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPI
 
 ## Prerequisites
 - Python: 3.8.13+
-- p4p: 4.1.4+
+- p4p: 3.5.5+
 - Matlab: 2020a+
 
-> **Note**: Although matpva is tested in Python 3.8.13, p4p 4.1.4, Matlab 2020a, there are still chances that some previous versions might work.
+> **Note**: Although matpva is tested in Python 3.8.13, p4p 3.5.5, Matlab 2020a, there are still chances that some previous versions might work. If you want to generated NTTable PVs using matlab_model_pvs.py or pva_testing_ioc.py, you need to use p4p 4.x+.
 
 ## Function and test scripts
 Python scripts to run Test PVs: pva_testing_ioc.py, matlab_model_pvs.py
