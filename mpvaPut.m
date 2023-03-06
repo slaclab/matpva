@@ -12,7 +12,9 @@ function mpvaPut(pvname, varargin)
 %    mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")        NTTable PVs
 %    mpvaPut(pvname, struct/table,  "mpvaDebugOn")                              NTTable PVs
 %
-
+if nargin < 2
+    error("Not enough input arguments. Please type help mpvaPut for the usage.") 
+end
 
 % Bring P4P python module into Matlab
 MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));

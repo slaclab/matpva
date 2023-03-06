@@ -5,6 +5,9 @@ function varargout = mpvaGet(pvname)
 %    [PV, ts, alarm] = mpvaGet(pvname)                       When PV is NTScalar or NTScalarArray type  
 %    [NTTable, ts, alarm, NTStruct] = mpvaGet(pvname)        When PV is NTTable type
 %
+if ~nargin
+    error("Not enough input arguments. Please type an input PV.") 
+end
 
 % Bring P4P python module into Matlab
 MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));
