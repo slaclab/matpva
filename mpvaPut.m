@@ -1,11 +1,18 @@
-%% Matlab function for the pvput using the P4P pythone module  in the MATLAB 2020a
 function mpvaPut(pvname, varargin)
-%% mpvaPut displays the previous and updated values of given EPICS PV names.
 %
-% INPUTS:
-%    pvname               A PV name
-%    varargin             Inputs to put the values in the PV
+% mpvaPut put the input values into the designated field in the givien EPICs PV name.
 %
+%    mpvaPut(pvname, value)                                      NTScalar or NTScalarArray PVs
+%    mpvaPut(pvname, field1, value1, field2, value2, ...)        NTTable PVs
+%    mpvaPut(pvname, struct/table)                               NTTable PVs
+%
+% By default, mpvaPut doesn't display anything. If you would like to print out previous and updated PVs, add "mpvaDebugOn"
+%
+%    mpvaPut(pvname, value, "mpvaDebugOn")                                      NTScalar or NTScalarArray PVs
+%    mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")        NTTable PVs
+%    mpvaPut(pvname, struct/table,  "mpvaDebugOn")                              NTTable PVs
+%
+
 
 % Bring P4P python module into Matlab
 MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));

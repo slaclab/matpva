@@ -1,9 +1,9 @@
-%% Matlab function for the pvget using the P4P pythone module  in the MATLAB 2020a
 function varargout = mpvaGet(pvname)
-%% mpvaGet returns the values of given EPICS PV names.
 %
-% INPUTS:
-%    pvname               A PV name    
+% mpvaGet returns the values of given EPICS PV names.
+%
+%    [PV, ts, alarm] = mpvaGet(pvname)                       When PV is NTScalar or NTScalarArray type  
+%    [NTTable, ts, alarm, NTStruct] = mpvaGet(pvname)        When PV is NTTable type
 %
 
 % Bring P4P python module into Matlab
