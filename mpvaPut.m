@@ -1,6 +1,6 @@
 function mpvaPut(pvname, varargin)
 %
-% mpvaPut put the input values into the designated field in the givien EPICs PV name.
+% mpvaPut puts the input values into the designated field in the givien EPICs PV name.
 %
 %    mpvaPut(pvname, value)                                      NTScalar or NTScalarArray PVs
 %    mpvaPut(pvname, field1, value1, field2, value2, ...)        NTTable PVs
@@ -87,14 +87,6 @@ elseif (contains(nt_id, "NTTable"))
             end
         end
         
-%         for i=1:1:(nargin-2)    % total number of inputs - 2 (one is PV name and the other is for the last inputs)
-%             if (rem(i,2)==1)
-%                 str = str + "varargin{" + i + "},";
-%             else
-%                 str = str + "num2cell(varargin{" + i + "}),";
-%             end
-%         end
-%         str = str + "num2cell(varargin{" + (nargin-1) + "}))";
         str = str + "num2cell(varargin{" + (num_ielements) + "}))";
         MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));
     end
@@ -103,10 +95,6 @@ else
 end
 
 % Return the new PV value for debuggin purpose
-% if (string(varargin{end}) == "mpvaDebugOn")
-%     fprintf('The updated PV is');
-%     updated_PV = mpvaGet(pvname)
-% end
 if (class(varargin{end}) == "string")
     if (varargin{end} == "mpvaDebugOn")
         fprintf('The update PV is');
