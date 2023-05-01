@@ -102,12 +102,13 @@ elseif (contains(nt_id, "NTTable"))
     aa = string(cell(a));
     k=numel(aa);
     
+    type_struct = struct(py.dict(struct(py.dict(type(PV))).value));
+    val_struct = struct(struct(todict(PV)).value);  
+    
     for i=1:k            
-        t_str = "struct(py.dict(struct(py.dict(type(PV))).value))." + aa(i);
-        str = "struct(struct(todict(PV)).value)." + aa(i);                 
-        e_type = eval(t_str);
-        v = eval(str);
-        
+        e_type = type_struct.(aa(i));
+        v = val_struct.(aa(i));
+                        
         if (e_type == 'ai')
             vv = int32(py.array.array('i', v));
             vv2 = int32(py.array.array('i', v))';   
