@@ -1,5 +1,4 @@
-% Matlab script to test mpvaGet function
-
+%% Matlab script to test mpvaGet function
 % Scalar PVs
 [PV, ts, alarm] = mpvaGet("TEST:PVA:IntValue")
 [PV, ts, alarm] = mpvaGet("TEST:PVA:uIntValue")
@@ -29,11 +28,11 @@
 [PV, ts, alarm] = mpvaGet("TEST:PVA:BoolArray")
 [PV, ts, alarm] = mpvaGet("TEST:PVA:StringArray")
 
-% NTNDArray
+% NTNDArray PV
 % Image = class(MatP4P.get('TEST:PVA:Image'))
 
-% NTTable
+% NTTable PV
 [NTTable, ts, alarm, NTStruct] = mpvaGet("TEST:PVA:NTTable")
 
-% NTTable TWISS
+% NTTable TWISS PV
 [NTTable, ts, alarm, NTStruct] =  mpvaGet("TBLEM:SYS0:1:CU_HXR:LIVE:TWISS")

@@ -6,14 +6,16 @@ function mpvaPut(pvname, varargin)
 %    mpvaPut(pvname, field1, value1, field2, value2, ...)        NTTable PVs
 %    mpvaPut(pvname, struct/table)                               NTTable PVs
 %
-% By default, mpvaPut doesn't display anything. If you would like to print out previous and updated PVs, add "mpvaDebugOn"
+% By default, mpvaPut doesn't display anything.
+% If you would like to print out previous and updated PVs, add "mpvaDebugOn"
 %
 %    mpvaPut(pvname, value, "mpvaDebugOn")                                      NTScalar or NTScalarArray PVs
 %    mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")        NTTable PVs
 %    mpvaPut(pvname, struct/table,  "mpvaDebugOn")                              NTTable PVs
 %
 if nargin < 2
-    error("Not enough input arguments. Please type help mpvaPut for the usage.") 
+    error("Not enough input arguments. Please type help mpvaPut for the usage.")
+else
 end
 
 % Bring P4P python module into Matlab
@@ -24,7 +26,9 @@ if (class(varargin{end}) == "string")
     if (varargin{end} == "mpvaDebugOn")
         fprintf('The old PV is');
         old_PV = mpvaGet(pvname)
+    else
     end
+else
 end
 
 PV = MatP4P.get(pvname);
@@ -33,7 +37,7 @@ PV = MatP4P.get(pvname);
 nt_id = string(getID(PV));
 
 % Check the type of PV
-t = class(PV);
+% t = class(PV);
 
 
 % NTScalarArrays
@@ -52,46 +56,52 @@ elseif (contains(nt_id, "NTTable"))
     
     % NTStruct inputs
     if (c == "struct")
-        str = "pyargs(";
-        fields = fieldnames(varargin{1});
-        for i=1:1:(numel(fields)-1)
-            str = str + "fields{" + i + "}, " + "num2cell(varargin{1}." + fields(i) + "), ";
+        str     = "pyargs(";
+        fields  = fieldnames(varargin{1});
+        for iField = 1 : (numel(fields) - 1)
+            str = str + "fields{" + iField + "}, " + "num2cell(varargin{1}." + fields(iField) + "), ";
         end
         str = str + "fields{" + numel(fields) + "}, " + "num2cell(varargin{1}." + fields(numel(fields)) + "))";
-        MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));        
+        MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));
+%         MatP4P.put(pvname, py.dict(pyargs('value', py.dict(str))));
         
     % NTTable inputs          
     elseif (c == "table")
-        str = "pyargs(";
-        fields = varargin{1}.Properties.VariableNames;
-        for i=1:1:(numel(fields)-1)
-            str = str + "fields{" + i + "}, " + "num2cell(varargin{1}." + fields(i) + "'), ";
+        str     = "pyargs(";
+        fields  = varargin{1}.Properties.VariableNames;
+        for iElem = 1 : (numel(fields) - 1)
+            str = str + "fields{" + iElem + "}, " + "num2cell(varargin{1}." + fields(iElem) + "'), ";
         end
         str = str + "fields{" + numel(fields) + "}, " + "num2cell(varargin{1}." + fields(numel(fields)) + "'))";
-        MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));         
+        MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));
+%         MatP4P.put(pvname, py.dict(pyargs('value', py.dict(str))));
         
     else
         if (string(varargin{end}) == "mpvaDebugOn")
-            num_ielements = nargin - 2;     % number of input elements are total argument inputs - 2 (one is PV name and the other is for the debugging mode indicator)                       
+            % number of input elements are total argument inputs - 2 
+            % (one is PV name and the other is for the debugging mode indicator)
+            num_ielements = nargin - 2;
         else
-            num_ielements = nargin - 1;     % number of input elements are total argument inputs - 1 (one is PV name)
+            % number of input elements are total argument inputs - 1 (one is PV name)
+            num_ielements = nargin - 1;
         end
         
         str = "pyargs(";
         
-        for i=1:1:(num_ielements-1)    % total number of inputs - 1 (one is for the last inputs)
-            if (rem(i,2)==1)
-                str = str + "varargin{" + i + "},";
+        % total number of inputs - 1 (one is for the last inputs)
+        for iElement = 1 : (num_ielements - 1)
+            if (rem(iElement, 2) == 1)
+                str = str + "varargin{" + iElement + "},";
             else
-                str = str + "num2cell(varargin{" + i + "}),";
+                str = str + "num2cell(varargin{" + iElement + "}),";
             end
         end
         
         str = str + "num2cell(varargin{" + (num_ielements) + "}))";
-        MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));
+        MatP4P.put(pvname, py.dict(pyargs('value', py.dict(eval(str)))));       
     end
     
-else    
+else
 end
 
 % Return the new PV value for debuggin purpose
@@ -99,9 +109,10 @@ if (class(varargin{end}) == "string")
     if (varargin{end} == "mpvaDebugOn")
         fprintf('The update PV is');
         updated_PV = mpvaGet(pvname)
+    else
     end
+else
 end
 
 MatP4P.close();
-
 end
