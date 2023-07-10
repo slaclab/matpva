@@ -18,6 +18,14 @@ if nargin < 2
 else
 end
 
+% Check if the input is valid PV
+if (class(pvname) == "char") || (class(pvname) == "string")
+    % pvname is valied no action is required.   
+else
+    msg = 'Please check if pvname is valid or the PV is alive';
+    error(msg)
+end
+
 % Bring P4P python module into Matlab
 MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));
 

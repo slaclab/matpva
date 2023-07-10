@@ -60,8 +60,3 @@ Psi_y       = [0.1, 0.2, 0.3, 0.4];
 mpvaPut("TBLEM:SYS0:1:CU_HXR:LIVE:TWISS", "element", Element, "device_name", Device_name, "s", S, "z", Z, ...
     "length", Length, "p0c", P0C, "alpha_x", Alpha_x, "beta_x", Beta_x, "eta_x", Eta_x, "etap_x", Etap_x, ...
     "psi_x", Psi_x, "alpha_y", Alpha_y, "beta_y", Beta_y, "eta_y", Eta_y, "etap_y", Etap_y, "psi_y", Psi_y, "mpvaDebugOn")
-
-
-
-
-
