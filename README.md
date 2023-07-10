@@ -43,5 +43,10 @@ mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")     # When P
 mpvaPut(pvname, struct/table,  "mpvaDebugOn")       # When PV is NTTable type
 ```
 
+## To Do
+1. Support mpvaMonitor (pvmonitor)
+2. Find a good example of NTNDArray PV and Support NTNDArray type
+
+
 ## Documnetation
 https://confluence.slac.stanford.edu/display/~ktkim/matpva%3A+Integrate+EPICS7+into+MATLAB+using+PVAccess+for+Python+%28P4P%29+module
