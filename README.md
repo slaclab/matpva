@@ -9,7 +9,7 @@ Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPI
 - p4p: 3.5.5+
 - Matlab: 2020a+
 
-> **Note**: Although matpva is tested in Python 3.8.13, p4p 3.5.5, Matlab 2020a, there are still chances that some previous versions might work. If you want to generated NTTable PVs using matlab_model_pvs.py or pva_testing_ioc.py, you need to use p4p 4.x+.
+> **Note**: While matpva has been primarily tested in Python 3.8.13, p4p 3.5.5, Matlab 2020a, there is a possibility that certain earlier versions could also function correctly. If you want to generate PVs using either matlab_model_pvs.py or pva_testing_ioc.py scripts, which enable timeStamp updates, it is necessary to utilize p4p version 4.x+.
 
 ## Function and test scripts
 Python scripts to run Test PVs: pva_testing_ioc.py, matlab_model_pvs.py
@@ -29,6 +29,7 @@ python matlab_model_pvs.py   # TWISS NTTable PV
 [PV, ts, alarm] = mpvaGet(pvname)     # When PV is NTScalar or NTScalarArray type
 [NTTable, ts, alarm, NTStruct] = mpvaGet(pvname)      # When PV is NTTable type     
 ```
+
 2. mpvaPut
 ```
 mpvaPut(pvname, value)      # When PV is NTScalar or NTScalarArray type
@@ -43,9 +44,13 @@ mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")     # When P
 mpvaPut(pvname, struct/table,  "mpvaDebugOn")       # When PV is NTTable type
 ```
 
+3. mpvaMonitor
+```
+mpvaPut(pvname)
+```
+
 ## To Do
-1. Support mpvaMonitor (pvmonitor)
-2. Find a good example of NTNDArray PV and Support NTNDArray type
+1. Find a good example of NTNDArray PV and Support NTNDArray type
 
 
 ## Documnetation
