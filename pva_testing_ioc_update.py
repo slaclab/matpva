@@ -134,7 +134,9 @@ class PVServer(object):
             self.context.put('KTEST:PVA:IntValue', random.randint(1, 100))
             self.context.put('KTEST:PVA:FloatValue', random.uniform(1, 100))
             self.context.put('KTEST:PVA:BoolValue', random.choice([True, False]))
+            self.context.put('KTEST:PVA:IntArray', (np.random.randint(100, size=7).tolist()))
             self.context.put('KTEST:PVA:FloatArray', (np.random.rand(5) * 10).tolist())
+            self.context.put('KTEST:PVA:NTTable', {'value.name': ['device_1', 'device_2'], 'value.number': np.random.rand(2) * 10})
 
 
 if __name__ == '__main__':
