@@ -2,7 +2,7 @@ function [] = mpvaMonitor(pvname)
 %
 % mpvaMonitor displays the values of given EPICS PV names when it is updated.
 %
-%    mpvaGet(pvname)
+%    mpvaMonitor(pvname)
 %
 
 % Check if the input is valid PV
@@ -13,7 +13,8 @@ catch
     error(msg)
 end
 
-string = append("python3 pva_callback.py ", pvname);
+% Bring the Python script for the mpvpaMonitor
+string = append("python pva_callback.py ", pvname);
 system(string)
 
 end

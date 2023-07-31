@@ -14,7 +14,7 @@ class Handler(object):
     def put(self, pv: SharedPV, op: ServerOperation) -> None:
         """ Called each time a client issues a put operation on the channel using this handler """
         # pv.post(op.value())  # Without timestamp
-        pv.post(op.value(), timestamp=time.time())  # Add timestamp        
+        pv.post(op.value(), timestamp=time.time())  # Add timestamp
         op.done()
 
 
@@ -34,7 +34,7 @@ class PVServer(object):
     def create_pvs(self) -> None:
         """ Create a few PVs for interacting with """
         handler = Handler()  # A simple default handler that will just post PV updates is sufficient here
-     
+
         # A scalar int value with some alarm limits set
         nt = NTScalar("i", display=True, control=True, valueAlarm=True)
         initial = nt.wrap({'value': 5, 'valueAlarm': {'lowAlarmLimit': 2, 'lowWarningLimit': 3,
@@ -92,8 +92,8 @@ class PVServer(object):
                                    'KTEST:PVA:LongValue': self.long_value,
                                    'KTEST:PVA:uLongValue': self.ulong_value,
                                    'KTEST:PVA:FloatValue': self.float_value,
-								   'KTEST:PVA:DoubleValue': self.double_value,
-                                   'KTEST:PVA:BoolValue': self.bool_value,                                   
+                                   'KTEST:PVA:DoubleValue': self.double_value,
+                                   'KTEST:PVA:BoolValue': self.bool_value,
                                    'KTEST:PVA:StringValue': self.string_value,
                                    'KTEST:PVA:IntArray': self.int_array,
                                    'KTEST:PVA:uIntArray': self.uint_array,
@@ -104,7 +104,7 @@ class PVServer(object):
                                    'KTEST:PVA:LongArray': self.long_array,
                                    'KTEST:PVA:uLongArray': self.ulong_array,
                                    'KTEST:PVA:FloatArray': self.float_array,
-								   'KTEST:PVA:DoubleArray': self.double_array,
+                                   'KTEST:PVA:DoubleArray': self.double_array,
                                    'KTEST:PVA:Waveform': self.wave_form,
                                    'KTEST:PVA:BoolArray': self.bool_array,
                                    'KTEST:PVA:StringArray': self.string_array,
