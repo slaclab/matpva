@@ -1,6 +1,6 @@
 function mpvaPut(pvname, varargin)
 %
-% mpvaPut puts the input values into the designated field in the givien EPICs PV name.
+% mpvaPut puts the input values into the designated field in the given EPICS PV name.
 %
 %    mpvaPut(pvname, value)                                      NTScalar or NTScalarArray PVs
 %    mpvaPut(pvname, field1, value1, field2, value2, ...)        NTTable PVs
