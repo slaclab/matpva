@@ -49,6 +49,18 @@ mpvaPut(pvname, struct/table,  "mpvaDebugOn")       # When PV is NTTable type
 mpvaPut(pvname)
 ```
 
+4. mpvaSetMonitor
+```
+PV = mpvaSetMonitor(pvname)      # Instantiate a ValueCache classs in mpvaSetMonitor.py Python module to monitor a pvname
+```
+
+4(a). mpvaNewMonitorValue
+```
+mpvaNewMonitorValue(PV)          # Return false if the pvname is not updated. Return true if it is updated.
+```
+*Note: mpvaNewMonitorValue function only works when mpvaSetMonitor is instantiated.
+
+
 ## To Do
 1. Find a good example of NTNDArray PV and Support NTNDArray type
 
