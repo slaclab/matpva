@@ -1,12 +1,12 @@
 function ret = mpvaSetMonitor(pvname)
 %
-% mpvaSetMonitor subscribed the given EPICS PV using Python class and store values in the cache when it is updated.
+% mpvaSetMonitor subscribes to the given EPICS PV using Python class and stores values in the cache when it is updated.
 % The module includes a method to check if the PV is updated since it has
 % been subscribed.
 %
 %    PV = mpvaSetMonitor(pvname)     # Instantiate a ValueCache classs in mpvaSetMonitor Python module to monitor a pvname
 %
-%    mpvaNewMkonitorValue(PV)        # Return false if the pvname is not updated. Retrun true if it is updated.
+%    mpvaNewMkonitorValue(PV)        # Return false if the pvname is not updated. Return true if it is updated.
 %
 
 % Check if the pvname is valid
