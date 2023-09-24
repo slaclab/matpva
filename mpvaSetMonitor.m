@@ -18,7 +18,7 @@ catch
 end
 
 % Add matpva module directory to Python search path
-path = [getenv('EPICS_EXTENSIONS') '/../matpva'];
+path = [getenv('EPICS_EXTENSIONS') '/../matpva/current'];
 
 if count(py.sys.path,path) == 0
     insert(py.sys.path,int32(0),path);
