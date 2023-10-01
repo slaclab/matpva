@@ -62,7 +62,7 @@ PV = mpvaSetMonitor(pvname)      # Instantiate a ValueCache classs in mpvaSetMon
 ```
 <br />
 
-5. **mpvaNewMonitorValue**: mpvaNewMonitorValue returns false if the pvname is not updated and returns true if it is updated.
+5. **mpvaNewMonitorValue**: mpvaNewMonitorValue returns false if the pvname is not updated and returns true if it is updated. This function is especially valuable when the read operation consumes a significant amount of time, such as when dealing with large arrays or NTTables.
 ```
 mpvaNewMonitorValue(PV)          # Return false if the pvname is not updated. Return true if it is updated.
 ```
