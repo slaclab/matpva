@@ -1,7 +1,7 @@
 # matpva: Integrate EPICS7 into MATLAB using PVAccess for Python (P4P) module
 
 ## Motivation
-Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPICS7 in the MATLAB environment. There were some efforts to integrate EPICS into MATLAB such as eget and labca. But, they are based on Java, and although PVAcess recommends JDK 8 or higher, MATLAB 2020a uses Java version 1.8 in the SLAC network. Therefore, matpva is developed to integrate EPICS7 into MATLAB based on Python using the P4P module to use PVAcess.
+Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPICS7 in the MATLAB environment. There were some efforts to integrate EPICS into MATLAB such as labca and MATLAB CA. However, these were specifically designed for the EPICS Channel Access (CA) interface within MATLAB. Consequently, they did not provide comprehensive support for EPICS PVAcess, which offers distinct advantages over CA including handling larger datasets such as NTTable. Therefore, matpva is developed to integrate EPICS7 into MATLAB based on Python using the P4P module to use PVAcess.
 <br /><br />
 
 ## Prerequisites
@@ -51,7 +51,7 @@ mpvaPut(pvname, struct/table,  "mpvaDebugOn")       # When PV is NTTable type
 
 3. **mpvaMonitor**: mpvaMonitor displays the values of given EPICS PV names when it is updated.
 ```
-mpvaPut(pvname)
+mpvaMonitor(pvname)
 ```
 <br />
 
