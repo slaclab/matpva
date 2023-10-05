@@ -1,7 +1,7 @@
-# matpva: Integrate EPICS7 into MATLAB using PVAccess for Python (P4P) module
+# Matpva: Integrate EPICS7 into MATLAB using PVAccess for Python (P4P) module
 
 ## Motivation
-Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPICS7 in the MATLAB environment. There were some efforts to integrate EPICS into MATLAB such as labca and MATLAB CA. However, these were specifically designed for the EPICS Channel Access (CA) interface within MATLAB. Consequently, they did not provide comprehensive support for EPICS PVAcess, which offers distinct advantages over CA including handling larger datasets such as NTTable. Therefore, matpva is developed to integrate EPICS7 into MATLAB based on Python using the P4P module to use PVAcess.
+Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPICS7 in the MATLAB environment. There were some efforts to integrate EPICS into MATLAB such as labca and MATLAB CA. However, these were specifically designed for the EPICS Channel Access (CA) interface within MATLAB. Consequently, they did not provide comprehensive support for EPICS PVAcess, which offers distinct advantages over CA including handling larger datasets such as NTTable. Therefore, Matpva is developed to integrate EPICS7 into MATLAB based on Python using the P4P module to use PVAcess.
 <br /><br />
 
 ## Prerequisites
@@ -9,7 +9,7 @@ Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPI
 - p4p: 3.5.5+
 - Matlab: 2020a+
 
-> **Note**: While matpva has been primarily tested in Python 3.8.13, p4p 3.5.5, Matlab 2020a, there is a possibility that certain earlier versions could also function correctly. If you want to generate PVs using either matlab_model_pvs.py or pva_testing_ioc.py scripts, which enable timeStamp updates, it is necessary to utilize p4p version 4.x+.
+> **Note**: While Matpva has been primarily tested in Python 3.8.13, p4p 3.5.5, Matlab 2020a, there is a possibility that certain earlier versions could also function correctly. If you want to generate PVs using either matlab_model_pvs.py or pva_testing_ioc.py scripts, which enable timeStamp updates, it is necessary to utilize p4p version 4.x+.
 
 <br />
 
