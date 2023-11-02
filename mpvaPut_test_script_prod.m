@@ -1,4 +1,24 @@
 %% Matlab script to test mpvaPut function for the NTTable PVs in prod
+
+% -----------------------------------------------------------------------------
+% Title      : mpvaPut test script prod
+% -----------------------------------------------------------------------------
+% File       : mpvaPut_test_script_prod.m
+% Author     : Kuktae Kim, ktkim@slac.stanford.edu
+% Created    : 2023-11-02
+% Last update: 2023-11-02
+% -----------------------------------------------------------------------------
+% Description:
+% Matlab script to test mpvaPut function in production.
+% -----------------------------------------------------------------------------
+% This file is part of matpva. It is subject to the license terms in the 
+% LICENSE.txt file found in the top-level directory of this distribution
+% and at: https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
+% No part of matpva, including this file, may be copied, modified, 
+% propagated, or distributed except according to the terms contained in 
+% the LICENSE.txt file.
+% -----------------------------------------------------------------------------
+
 % Test TWISS NTTable PV Values 1
 Element     = ["SOL9000", "XC99", "YC99"];
 DeviceName  = ["SOL:IN20:111", "XCOR:IN20:112", "YCOR:IN20:113"];

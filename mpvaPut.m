@@ -13,6 +13,26 @@ function mpvaPut(pvname, varargin)
 %    mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")        NTTable PVs
 %    mpvaPut(pvname, struct/table,  "mpvaDebugOn")                              NTTable PVs
 %
+
+% -----------------------------------------------------------------------------
+% Title      : mpvaPut
+% -----------------------------------------------------------------------------
+% File       : mpvaPut.m
+% Author     : Kuktae Kim, ktkim@slac.stanford.edu
+% Created    : 2023-11-02
+% Last update: 2023-11-02
+% -----------------------------------------------------------------------------
+% Description:
+% Put the input values into the designated field in the given EPICS PV name.
+% -----------------------------------------------------------------------------
+% This file is part of matpva. It is subject to the license terms in the 
+% LICENSE.txt file found in the top-level directory of this distribution
+% and at: https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
+% No part of matpva, including this file, may be copied, modified, 
+% propagated, or distributed except according to the terms contained in 
+% the LICENSE.txt file.
+% -----------------------------------------------------------------------------
+
 if nargin < 2
     error("Not enough input arguments. Please type help mpvaPut for the usage.")
 else

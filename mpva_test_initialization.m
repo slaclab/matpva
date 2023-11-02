@@ -1,4 +1,24 @@
 %% Matlab script to initialize the test PVs
+
+% -----------------------------------------------------------------------------
+% Title      : mpva test initialization
+% -----------------------------------------------------------------------------
+% File       : mpva_test_initialization.m
+% Author     : Kuktae Kim, ktkim@slac.stanford.edu
+% Created    : 2023-11-02
+% Last update: 2023-11-02
+% -----------------------------------------------------------------------------
+% Description:
+% Initialize the test PVs.
+% -----------------------------------------------------------------------------
+% This file is part of matpva. It is subject to the license terms in the 
+% LICENSE.txt file found in the top-level directory of this distribution
+% and at: https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
+% No part of matpva, including this file, may be copied, modified, 
+% propagated, or distributed except according to the terms contained in 
+% the LICENSE.txt file.
+% -----------------------------------------------------------------------------
+
 % Initial Scalar PV Values
 IntValue    = 0;
 FloatValue  = 0.7;

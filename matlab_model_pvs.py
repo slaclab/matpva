@@ -1,3 +1,21 @@
+# -----------------------------------------------------------------------------
+# Title      : matlab model pvs
+# -----------------------------------------------------------------------------
+# File       : matlab_model_pvs.py
+# Author     : Kuktae Kim, ktkim@slac.stanford.edu
+# Created    : 2023-11-02
+# Last update: 2023-11-02
+# -----------------------------------------------------------------------------
+# Description:
+# Create NTTable PVs for testing matpva.
+# -----------------------------------------------------------------------------
+# This file is part of matpva. It is subject to the license terms in the 
+# LICENSE.txt file found in the top-level directory of this distribution
+# and at: https://confluence.slac.stanford.edu/display/ppareg/LICENSE.html. 
+# No part of matpva, including this file, may be copied, modified, 
+# propagated, or distributed except according to the terms contained in 
+# the LICENSE.txt file.
+# -----------------------------------------------------------------------------
 import numpy as np
 from p4p.nt import NTTable
 from p4p.server import Server as PVAServer
