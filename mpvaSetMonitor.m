@@ -24,7 +24,6 @@ if count(py.sys.path,path) == 0
     insert(py.sys.path,int32(0),path);
 end
 
-
 MatP4P = py.p4p.client.thread.Context('pva', pyargs('nt', false));
 
 % Return ValueCache class in mpvaSetMonitor Python module
