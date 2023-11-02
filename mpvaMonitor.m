@@ -14,9 +14,7 @@ catch
 end
 
 % Bring the Python script for the mpvpaMonitor
-%path = getenv('EPICS_EXTENSIONS') + "/../matpva/";
-%string = append("python", path, "pva_callback.py", pvname);
-string = append("python pva_callback.py ", pvname);
+string = append("python3 pva_callback.py ", pvname);
 system(string)
 
 end
