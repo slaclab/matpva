@@ -31,8 +31,11 @@ catch
     error(msg)
 end
 
+% Add matpva module directory to the path
+path = [getenv('EPICS_EXTENSIONS') '/../matpva/current/'];
+
 % Bring the Python script for the mpvpaMonitor
-string = append("python3 pva_callback.py ", pvname);
+string = append("python3 ", path, "pva_callback.py ", pvname);
 system(string)
 
 end
