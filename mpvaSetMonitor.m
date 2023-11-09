@@ -6,7 +6,7 @@ function ret = mpvaSetMonitor(pvname)
 %
 %    PV = mpvaSetMonitor(pvname)     # Instantiate a ValueCache classs in mpvaSetMonitor Python module to monitor a pvname
 %
-%    mpvaNewMkonitorValue(PV)        # Return false if the pvname is not updated. Return true if it is updated.
+%    mpvaNewMonitorValue(PV)         # Return false if the pvname is not updated. Return true if it is updated.
 %
 
 % -----------------------------------------------------------------------------
@@ -30,7 +30,6 @@ function ret = mpvaSetMonitor(pvname)
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 % Check if the pvname is valid
 try
     mpvaGet(pvname);

@@ -18,7 +18,6 @@
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 % Initial Scalar PV Values
 IntValue    = 0;
 FloatValue  = 0.7;

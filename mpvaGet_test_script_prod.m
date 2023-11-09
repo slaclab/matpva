@@ -18,7 +18,6 @@
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 [NTTable, ts, alarm, NTStruct] =  mpvaGet("BLEM:SYS0:1:CU_HXR:LIVE:TWISS")
 [NTTable, ts, alarm, NTStruct] =  mpvaGet("BLEM:SYS0:1:CU_SXR:EXTANT:TWISS")
 [NTTable, ts, alarm, NTStruct] =  mpvaGet("BLEM:SYS0:1:SC_HXR:EXTANT:RMAT")

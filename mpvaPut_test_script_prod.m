@@ -18,7 +18,6 @@
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 % Test TWISS NTTable PV Values 1
 Element     = ["SOL9000", "XC99", "YC99"];
 DeviceName  = ["SOL:IN20:111", "XCOR:IN20:112", "YCOR:IN20:113"];

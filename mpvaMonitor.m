@@ -23,7 +23,6 @@ function [] = mpvaMonitor(pvname)
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 % Check if the input is valid PV
 try
     mpvaGet(pvname);

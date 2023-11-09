@@ -24,7 +24,6 @@ function varargout = mpvaGet(pvname)
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 if ~nargin
     error("Not enough input arguments. Please type an input PV.")
 else

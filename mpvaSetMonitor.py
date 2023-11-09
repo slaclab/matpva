@@ -16,7 +16,6 @@
 # propagated, or distributed except according to the terms contained in 
 # the LICENSE.txt file.
 # -----------------------------------------------------------------------------
-
 # mpvaSetMonitor.py
 from p4p.client.thread import Context, Disconnected
 

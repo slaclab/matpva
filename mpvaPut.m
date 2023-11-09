@@ -32,7 +32,6 @@ function mpvaPut(pvname, varargin)
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 if nargin < 2
     error("Not enough input arguments. Please type help mpvaPut for the usage.")
 else

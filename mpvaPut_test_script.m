@@ -18,7 +18,6 @@
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 % Test Scalar PV Values
 IntValue    = 3;
 FloatValue  = 7.7;

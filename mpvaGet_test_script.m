@@ -18,7 +18,6 @@
 % propagated, or distributed except according to the terms contained in 
 % the LICENSE.txt file.
 % -----------------------------------------------------------------------------
-
 % Scalar PVs
 [PV, ts, alarm] = mpvaGet("TEST:PVA:IntValue")
 [PV, ts, alarm] = mpvaGet("TEST:PVA:uIntValue")
