@@ -5,9 +5,9 @@ function varargout = mpvaGetArchived(pvname, starttime, endtime)
 %    [NTTable, ts, alarm, NTStruct] = mpvaGetArchived(pvname, starttime, endtime)
 %
 %    starttime: Beginning time as a datetime object or a string in
-%                   the format 'YYYY-MM-DDTHH:MM:SS.SSSZ'
+%                   format 'mm/dd/yyyy hh:mm:ss' or standard matlab date formats
 %    endtime:   Ending time as a datetime object or a string in
-%                   the format 'YYYY-MM-DDTHH:MM:SS.SSSZ'
+%                   format 'mm/dd/yyyy hh:mm:ss' or standard matlab date formats
 %
 
 % -----------------------------------------------------------------------------
@@ -40,24 +40,18 @@ if ~((class(pvname) == "char") || (class(pvname) == "string"))
     error(msg)
 end
 
-% If starttime/endtime is a datetime, convert it to a string
-if isdatetime(starttime)
-    starttime.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z';
-    starttime = string(starttime);
-end
+% Convert timestamps to strings in ISO 8601 format in UTC time
+[start_str, end_str] = local2utc(starttime, endtime);
 
-if isdatetime(endtime)
-    endtime.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z';
-    endtime = string(endtime);
-end
+% Get the descriptor of the current accelerator. Used in constructing the Archiver's URL
+[~, accelerator] = getSystem;
 
 % Construct the Archiver's URL
-[~, accelerator] = getSystem;
 accelerator = lower(accelerator);
 url = ['http://' accelerator '-archapp.slac.stanford.edu/retrieval/data/getData.json'];
 
 % Make a request to the Archiver
-parameters = struct('pv', pvname, 'from', starttime, 'to', endtime);
+parameters = struct('pv', pvname, 'from', start_str, 'to', end_str);
 payload = py.requests.get(url, pyargs('params', parameters));
 
 % Fail if the request fails
@@ -75,11 +69,13 @@ data_type = "NTTable";  % Allows for inclusion of other data types later
 
 for val=1:num_vals
     TimeInSeconds = data(val).val.timeStamp.secondsPastEpoch;
-    ts = datetime(TimeInSeconds, ...
+    NanoSeconds = data(val).val.timeStamp.nanoseconds * 10^-9;
+    ts = datetime(TimeInSeconds + NanoSeconds, ...
         'ConvertFrom', 'epochtime', ...
         'Epoch', '1970-01-01', ...
         'Format', 'MMM dd, yyy HH:mm:ss.SSS', ...
         'TimeZone', 'UTC');
+    ts.TimeZone = 'America/Los_Angeles';
    
     alarm = data(val).val.alarm;
     
@@ -91,4 +87,21 @@ for val=1:num_vals
         varargout{4}{end+1} = data(val).val.value;
     end
     
+end
+end
+
+
+function [start_str, end_str] = local2utc(starttime, endtime)
+    % Return timestamp as a string in UTC in ISO 8601 format
+    infmt = 'mm/dd/yyyy hh:mm:ss';
+    
+    starttime = datetime(starttime, 'InputFormat', infmt, 'TimeZone', 'America/Los_Angeles');
+    starttime.TimeZone = 'UTC';
+    starttime.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z';
+    start_str = string(starttime);
+    
+    endtime = datetime(endtime, 'InputFormat', infmt, 'TimeZone', 'America/Los_Angeles');
+    endtime.TimeZone = 'UTC';
+    endtime.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z';
+    end_str = string(endtime);
 end
