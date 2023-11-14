@@ -74,6 +74,8 @@ mpvaNewMonitorValue(PV)          # Return false if the pvname is not updated. Re
 ```
 [NTTable, ts, alarm, NTStruct] = mpvaGetArchived(pvname, starttime, endtime)      
 ```
+> **Note**: mpvaGetArchived function only works with NTTable PVs as they are the only PVAccess PVs being archived (as of 11/14/2023).
+
 <br />
 
 ## To Do

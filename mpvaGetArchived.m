@@ -20,6 +20,8 @@ function varargout = mpvaGetArchived(pvname, starttime, endtime)
 % -----------------------------------------------------------------------------
 % Description:
 % Return the archived values of the given PV name for the specified time range.
+%
+% Note: Only works with NTTable PVs as they are the only PVAccess PVs being archived (as of 11/14/2023)
 % -----------------------------------------------------------------------------
 % This file is part of matpva. It is subject to the license terms in the 
 % LICENSE.txt file found in the top-level directory of this distribution
