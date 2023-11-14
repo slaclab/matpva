@@ -70,6 +70,14 @@ mpvaNewMonitorValue(PV)          # Return false if the pvname is not updated. Re
 
 <br />
 
+6. **mpvaGetArchived**: mpvaGetArchived returns the archived values of the given PV name for the specified time range.
+```
+[NTTable, ts, alarm, NTStruct] = mpvaGetArchived(pvname, starttime, endtime)      
+```
+> **Note**: mpvaGetArchived function only works with NTTable PVs as they are the only PVAccess PVs being archived (as of 11/14/2023).
+
+<br />
+
 ## To Do
 1. Find a good example of NTNDArray PV and Support NTNDArray type
 
