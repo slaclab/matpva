@@ -93,14 +93,12 @@ end
 
 function [start_str, end_str] = local2utc(starttime, endtime)
     % Return timestamp as a string in UTC in ISO 8601 format
-    infmt = 'mm/dd/yyyy hh:mm:ss';
-    
-    starttime = datetime(starttime, 'InputFormat', infmt, 'TimeZone', 'America/Los_Angeles');
+    starttime = datetime(starttime, 'TimeZone', 'America/Los_Angeles');
     starttime.TimeZone = 'UTC';
     starttime.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z';
     start_str = string(starttime);
     
-    endtime = datetime(endtime, 'InputFormat', infmt, 'TimeZone', 'America/Los_Angeles');
+    endtime = datetime(endtime, 'TimeZone', 'America/Los_Angeles');
     endtime.TimeZone = 'UTC';
     endtime.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z';
     end_str = string(endtime);
