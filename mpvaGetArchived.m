@@ -5,9 +5,9 @@ function varargout = mpvaGetArchived(pvname, starttime, endtime)
 %    [NTTable, ts, alarm, NTStruct] = mpvaGetArchived(pvname, starttime, endtime)
 %
 %    starttime: Beginning time as a datetime object or a string in
-%                   format 'mm/dd/yyyy hh:mm:ss' or standard matlab date formats
+%                   format 'mm/dd/yyyy hh:mm:ss'
 %    endtime:   Ending time as a datetime object or a string in
-%                   format 'mm/dd/yyyy hh:mm:ss' or standard matlab date formats
+%                   format 'mm/dd/yyyy hh:mm:ss'
 %
 
 % -----------------------------------------------------------------------------
@@ -93,8 +93,8 @@ end
 
 function [start_str, end_str] = local2utc(starttime, endtime)
     % Return timestamp as a string in UTC in ISO 8601 format
-    infmt = 'mm/dd/yyyy hh:mm:ss';
-    
+    infmt = 'MM/dd/yyyy HH:mm:ss';
+
     starttime = datetime(starttime, 'InputFormat', infmt, 'TimeZone', 'America/Los_Angeles');
     starttime.TimeZone = 'UTC';
     starttime.Format = 'yyyy-MM-dd''T''HH:mm:ss.SSS''Z';
