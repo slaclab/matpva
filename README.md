@@ -83,5 +83,10 @@ mpvaNewMonitorValue(PV)          # Return false if the pvname is not updated. Re
 
 <br />
 
-## Documnetation
+## Known Issues
+1. If both labCA and p4p modules are used in MATLAB and then exit, it generates a segment violation message while closing the labCA with the message "Entering labca finalizer."
+
+<br />
+
+## Documentation
 https://confluence.slac.stanford.edu/display/~ktkim/matpva%3A+Integrate+EPICS7+into+MATLAB+using+PVAccess+for+Python+%28P4P%29+module
