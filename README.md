@@ -11,6 +11,8 @@ Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPI
 
 > **Note**: While Matpva has been primarily tested in Python 3.8.13, p4p 3.5.5, Matlab 2020a, there is a possibility that certain earlier versions could also function correctly. If you want to generate PVs using either matlab_model_pvs.py or pva_testing_ioc.py scripts, which enable timeStamp updates, it is necessary to utilize p4p version 4.x+.
 
+> Please check Versions of Python Compatible with MATLAB Products by Release: https://www.mathworks.com/support/requirements/python-compatibility.html
+
 <br />
 
 ## Function and test scripts
