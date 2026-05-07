@@ -1,0 +1,58 @@
+#
+# Load this database into a basic application, e.g., the
+# EPICS base 'example' application will do (no need for
+# the example's own db files):
+#
+# example
+# epics> dbLoadDatabase("dbd/example.dbd")
+# epics> example_registerRecordDeviceDriver(pdbbase)
+# epics> dbLoadDatabase("mpvaTest.db")
+# epics> iocInit()
+#
+record(waveform,"mpva:wav0") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav1") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav2") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav3") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav4") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav5") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav6") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav7") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav8") { field("NELM", "100") field("FTVL", "LONG") }
+record(waveform,"mpva:wav9") { field("NELM", "100") field("FTVL", "LONG") }
+
+# Should not fit in a CA transfer!
+record(waveform,"mpva:wavA") {
+	field("NELM", "20000")
+	field("FTVL", "FLOAT")
+	field("EGU",  "testU")
+	field("PREC", "4")
+	field("HOPR", "111")
+	field("LOPR", "-222")
+	field("PINI", "YES")
+}
+
+record(calc,    "mpva:count") {
+	field("INPA","mpva:count")
+	field("CALC","A+1")
+	field("SCAN","1 second")
+}
+
+record(ai,      "mpva:scl0") { }
+record(ai,      "mpva:scl1") { }
+record(ai,      "mpva:scl2") { }
+record(ai,      "mpva:scl3") { }
+record(ai,      "mpva:scl4") { }
+record(ai,      "mpva:scl5") { }
+record(ai,      "mpva:scl6") { }
+record(ai,      "mpva:scl7") { }
+record(ai,      "mpva:scl8") { }
+record(ai,      "mpva:scl9") { }
+
+record(ao,      "mpva:out")  { }
+
+# long integer must not be converted to intermediate
+# float (bug reported by J. Vasquez, 2017/08/01).
+record(longin,  "mpva:li1") {
+	field("VAL", "2147400000")
+	field("PINI","YES")
+}

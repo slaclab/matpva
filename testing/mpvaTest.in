@@ -1,0 +1,668 @@
+// Test script for MPVA; load 'test.db' into a soft-IOC example app
+// and run this script from scilab/matlab...
+//
+// Make sure there is no console prompt ('continue [y]/n?') during
+// the timeout test!
+//
+// Reset severity warn level
+mpvaSetSeverityWarnLevel(3)
+mpvaSetSeverityWarnLevel(13)
+
+// Test basic error handling
+disp('TESTING basic error throwing')
+mpva_fail=0;
+try
+	mpvaSetTimeout()
+	mpva_fail=1;
+catch
+// just continue
+end
+if ( 0 == mpva_fail )
+	disp('<<<OK')
+else
+	error('basic error throwing test FAILED')
+end
+
+
+// We want to verify that mpvaGetPrecision, mpvaGetxxxLimits, mpvaGetUnits,
+// mpvaGetStatus don't transfer all array elements. We want these calls
+// to fail if we fetch them for a large waveform.
+disp('VERIFYING THAT EPICS_CA_MAX_ARRAY_BYTES IS *SMALL* ENOUGH FOR TEST')
+disp(' *** this may take a while - be patient *** ')
+mpva_fail=0;
+try
+    mpvaGet('mpva:wavA');
+	mpva_fail=1;
+catch
+end
+if ( 0 == mpva_fail )
+	disp('<<<OK') 
+else
+    error('mpvaGet should have failed -- unset EPICS_CA_MAX_ARRAY_BYTES and under epics-7 set EPICS_CA_AUTO_ARRAY_BYTES=NO')
+end
+
+
+
+// Make sure any previous monitors and channels are removed
+disp('CLEARING ALL')
+mpvaClear()
+disp('<<<OK')
+
+
+// Test for features
+disp('CHECKING FEATURES/VERSION')
+try
+	mpvaLastError();
+	try
+		mpvaGetEnumStrings('mpva:scl0');
+		mpvaversion=3.5
+	catch
+		mpvaversion=3
+	end
+catch
+	mpvaversion=2
+end
+disp('<<<OK')
+
+// Test timeout and retry count
+
+try 
+// {
+//  argument check
+	if ( mpvaversion > 2 )
+		try
+			mpvaSetTimeout(0)
+		catch
+			if ( mpvaLastError() ~= 1 )
+				errxxx=lasterror()
+				error(errxxx)
+			end
+		end
+		try
+			mpvaSetRetryCount(0)
+		catch
+			if ( mpvaLastError() ~= 1 )
+				errxxx=lasterror()
+				error(errxxx)
+			end
+		end
+	end
+	
+	if ( mpvaversion > 2 )
+	mpvaTmeout   = 0.5
+	mpvaRetryCnt = 4
+	else
+	mpvaTmeout   = 0.05
+	mpvaRetryCnt = 40
+	end
+	
+	mpvaSetTimeout(mpvaTmeout)
+	
+	if ( abs(mpvaGetTimeout() - mpvaTmeout) > 1E-4 )
+		error('Readback of timeout FAILED')
+	end
+	
+	mpvaSetRetryCount(mpvaRetryCnt)
+	
+	if ( mpvaGetRetryCount() ~= mpvaRetryCnt )
+		error('Readback of retry count FAILED')
+	end
+	
+//  estimate timeout
+	tic()
+		try
+			disp('Waiting for timeout to expire...')
+	    	disp('An error >could not find process variable : xxxx5789z< is normal here')
+			mpvaGet('xxxx5789z')
+		catch
+			if ( mpvaversion > 2 )
+			if ( mpvaLastError() ~= 6 ) 
+				disp('mpvaGet from unkown PV timeout expected but got other error')
+				errxxx=lasterror()
+				error(errxxx)
+			end
+			end
+		end
+	tme = toc();
+	if ( tme < 1 | tme > 3 )
+		error(msprintf('timeout (%i) out of bounds',tme))
+	end
+// }
+catch 
+	disp('Timeout/Retry count test FAILED')
+	errxxx=lasterror()
+	error(errxxx)
+end
+
+disp('<<< Timeout/Retry count test COMPLETED')
+disp('')
+disp('')
+disp('Testing mpvaGet/mpvaPut/mpvaPutNoWait')
+
+// Test Put and Get
+// Fill a matrix with numbers 1..10000
+
+nums = ones(10,1)*[0:99] + [1:100:1000]'*ones(1,100);
+wavs = {{...
+	'mpva:wav0'; 'mpva:wav1'; 'mpva:wav2'; 'mpva:wav3'; 'mpva:wav4';...
+	'mpva:wav5'; 'mpva:wav6'; 'mpva:wav7'; 'mpva:wav8'; 'mpva:wav9';...
+}};
+
+try 
+// {
+	disp('CHECKING TIMESTAMPS')
+	mpvaPut( 'mpva:scl0', 432 )
+	[got, ts]  = mpvaGet( 'mpva:scl0' );
+	sleep(1000*3)
+	mpvaPut( 'mpva:scl0', 234 )
+	[got, ts1] = mpvaGet( 'mpva:scl0' );
+	got = real(ts1-ts)
+	if got < 2.5 | got > 3.5
+		error('TIMESTAMP TEST FAILED')
+	end
+	disp('<<<OK')
+	
+	mpvaPut( wavs, nums );
+	
+	[got, ts] = mpvaGet(wavs);
+	if ( find(got ~= nums) )
+		error('mpvaGet(wavs) ~= nums')
+	end
+	
+	disp('VERIFY THAT mpvaPutNoWait FLUSHES IMMEDIATELY')
+	mpvaPutNoWait(wavs, zeros(10,100))
+	
+	disp('Sleeping for 3s to verify mpvaPutNoWait() flushing queue')
+//  don't change format of sleep; sed script for
+//  conversion to matlab looks for string
+//  's','l','e','e','p','(','1','0','0','0','*'
+	sleep(1000*3)
+	
+	[got, ts1] = mpvaGet(wavs(1),1);
+	
+	if ( prod(size(got)) ~= 1 )
+		error('Asking for 1 waveform element FAILED')
+	end
+	if ( real(ts1-ts(1)) > 1 ) 
+		error('mpvaPutNoWait() flush check FAILED')
+	end
+	disp('<<<OK')
+	
+	disp('CHECKING TYPE CONVERSIONS FOR mpvaPut')
+	
+//  restore values
+	mpvaPutNoWait(wavs,nums)
+	
+//  Verify that we can read a subarray
+	got = mpvaGet(wavs,4);
+	
+	if ( find(got ~= nums(:,1:4)) )
+		error('Reading subarray FAILED')
+	end
+	
+//  Verify that we can write typed values
+	mpvaPut('mpva:scl0',2^32+1234,'d')
+	if ( mpvaGet('mpva:scl0') ~= 2^32+1234 )
+		error('type DOUBLE readback check FAILED')
+	end
+	
+	mpvaPut('mpva:scl0',2^32+1234,'l')
+	longscl = mpvaGet('mpva:scl0');
+//  FIXME: unclear how double is converted -> long
+//  some compilers produce 2^31-1 others -2^31 and yet others 1234...
+	if ( longscl ~= 2^31-1 & longscl ~= -2^31 & longscl ~= 1234 )
+		error('type LONG readback overflow check FAILED')
+	end
+	mpvaPut('mpva:scl0',2^16+1234,'l')
+	if ( mpvaGet('mpva:scl0') ~= 2^16+1234 )
+		error('type LONG readback check FAILED')
+	end
+	mpvaPut('mpva:scl0',2^16+1234,'s')
+	if ( mpvaGet('mpva:scl0') ~= 1234 )
+		error('type SHORT readback overflow check FAILED')
+	end
+	mpvaPut('mpva:scl0',1234,'s')
+	if ( mpvaGet('mpva:scl0') ~= 1234 )
+		error('type SHORT readback check FAILED')
+	end
+	mpvaPut('mpva:scl0',1234,'b')
+//  IOC puts CHAR as UCHAR !!!
+//  (see) dbPutNotifyMapType() hence 
+//  well get 210 back instead of -46
+	if ( mpvaGet('mpva:scl0') ~= 1234-1024 )
+		error('type BYTE readback overflow check FAILED')
+	end
+	mpvaPut('mpva:scl0',123,'b')
+	if ( mpvaGet('mpva:scl0') ~= 123 )
+		error('type BYTE readback check FAILED')
+	end
+	
+	disp('<<<OK')
+	
+	disp('CHECKING TYPE CONVERSIONS FOR mpvaGet')
+	
+//  Verify that we can read typed values
+	mpvaPut('mpva:scl0', 2^32+1234)
+//  ??? conversion happens on IOC and is compiler-dependent :-(;
+//  seems we get -2^31
+	if ( mpvaGet('mpva:scl0',0,'l') ~= -2^31 )
+		error('type LONG read overflow check FAILED')
+	end
+	
+	mpvaPut('mpva:scl0',2^16+1234)
+	if ( mpvaGet('mpva:scl0',0,'l') ~= 2^16+1234 )
+		error('type LONG read check FAILED')
+	end
+//  ??? conversion happens on IOC and is compiler-dependent :-(;
+//  some (same EPICS versions) seem to saturate, others
+//  truncate the bits...
+	longscl = mpvaGet('mpva:scl0',0,'s'); 
+	if (  longscl ~= -2^15 & longscl ~= 1234 )
+		error('type SHORT read overflow check FAILED')
+	end
+	mpvaPut('mpva:scl0',1234)
+	if ( mpvaGet('mpva:scl0',0,'s') ~= 1234 )
+		error('type SHORT read check FAILED')
+	end
+//  ??? conversion happens on IOC and is compiler-dependent :-(;
+//  some (same EPICS versions) seem to saturate, others
+//  truncate the bits...
+	longscl = mpvaGet('mpva:scl0',0,'b'); 
+	if ( longscl ~= -46 )
+		error('type BYTE read overflow check FAILED')
+	end
+	mpvaPut('mpva:scl0',123)
+	if ( mpvaGet('mpva:scl0',0,'b') ~= 123 )
+		error('type BYTE read check FAILED')
+	end
+	
+//  Check string/menu conversion
+	if ( ~mtlb_strcmp(mpvaGet('mpva:scl0',0,'c'),'123') )
+		error('type STRING -> number read check FAILED')
+	end
+	if ( ~mtlb_strcmp(mpvaGet('mpva:count.SCAN'),'1 second') )
+		error('type STRING read check FAILED')
+	end
+	if ( mpvaGet('mpva:count.SCAN',0,'l') ~= 6 )
+		error('type STRING -> number (menu) read check FAILED')
+	end
+	mpvaPut('mpva:count.SCAN','Passive')
+	if ( mpvaGet('mpva:count.SCAN',0,'l') ~= 0 )
+		error('type STRING -> number (menu) write check FAILED')
+	end
+	mpvaPut('mpva:count.SCAN',6)
+	if ( ~ mtlb_strcmp(mpvaGet('mpva:count.SCAN'), '1 second') )
+		error('type STRING -> number (menu) write check FAILED')
+	end
+	
+// }
+catch 
+	disp('Testing mpvaGet/mpvaPut/mpvaPutNoWait FAILED')
+	errxxx=lasterror()
+	error(errxxx)
+end
+
+disp('<<<OK')
+
+disp('CHECKING mpvaGetNelem')
+if ( find( mpvaGetNelem(wavs) ~= 100*ones(10,1) ) )
+	error('mpvaGetNelem FAILED')
+end
+disp('<<<OK')
+
+disp('CHECKING mpvaGetControlLimits / mpvaGetGraphicLimits / mpvaGetPrecision')
+
+disp('VERIFY that mpvaGetControlLimits transfer size is small')
+try
+	mpvaGetControlLimits('mpva:wavA');
+catch
+	error('FAILED: seems mpvaGetControlLimits transfers all data')
+end
+disp('<<<OK')
+
+disp('VERIFY that mpvaGetGraphicLimits transfer size is small')
+try
+	mpvaGetGraphicLimits('mpva:wavA');
+catch
+	error('FAILED: seems mpvaGetGraphicLimits transfers all data')
+end
+disp('<<<OK')
+
+disp('VERIFY that mpvaGetPrecision     transfer size is small')
+try
+	mpvaGetPrecision('mpva:wavA');
+catch
+	error('FAILED: seems mpvaGetPrecision transfers all data')
+end
+disp('<<<OK')
+
+hopr =   500;
+lopr = -1500;
+drvh = 13000;
+drvl = -4321;
+
+mpvaPut({{'mpva:out.HOPR';'mpva:out.LOPR'}},[hopr ; lopr])
+mpvaPut({{'mpva:out.DRVH';'mpva:out.DRVL'}},[drvh ; drvl])
+mpvaPut('mpva:out.PREC',5)
+mpvaPut('mpva:out',0.12345)
+
+[ lo, hi ] = mpvaGetControlLimits('mpva:out');
+
+if ( lo ~= drvl | hi ~= drvh )
+	error('mpvaGetControlLimits test FAILED')
+end
+
+[ lo, hi ] = mpvaGetGraphicLimits('mpva:out');
+
+if ( lo ~= lopr | hi ~= hopr )
+	error('mpvaGetGraphicLimits test FAILED')
+end
+
+if ( mpvaversion > 2 )
+if ( mpvaGetPrecision('mpva:out') ~= 5 )
+	error('mpvaGetPrecision test FAILED')
+end
+
+if ( ~mtlb_strcmp(mpvaGet('mpva:out',0,'c'),'0.12345') )
+	error('mpvaGetPrecision test (string 1) FAILED')
+end
+
+mpvaPut('mpva:out.PREC',2)
+
+if ( ~mtlb_strcmp(mpvaGet('mpva:out',0,'c'),'0.12') )
+	error('mpvaGetPrecision test (string 2) FAILED')
+end
+end
+
+disp('<<<OK')
+
+disp('VERIFY that mpvaGetStatus transfer size is small')
+try
+	mpvaGetStatus('mpva:wavA');
+catch
+	error('FAILED: seems mpvaGetStatus transfers all data')
+end
+disp('<<<OK')
+
+disp('CHECKING mpvaGetStatus and severity rejection')
+
+// argument check
+try
+  mpvaGetStatus('mpva:scl0');
+  sevr = mpvaGetStatus('mpva:scl0');
+  [ sevr, stat ]  = mpvaGetStatus('mpva:scl0');
+  [ sevr, stat, ts ]  = mpvaGetStatus('mpva:scl0');
+catch
+	error('mpvaGetStatus FAILED: cannot handle all possible output args');
+end
+
+// try invalid args
+mpva_fail=0;
+try
+	mpvaGetStatus();
+	mpva_fail=1;
+catch
+// just continue
+end
+if ( 0 ~= mpva_fail )
+	error('mpvaGetStatus FAILED to reject no arg');
+end
+
+mpva_fail=0;
+try
+	[sevr, stat, ts, got] = mpvaGetStatus('mpva:scl0');
+	mpva_fail=1;
+catch
+// just continue
+end
+if ( 0 ~= mpva_fail )
+	error('mpvaGetStatus FAILED to reject to many output args');
+end
+
+
+// scl5 is always UDF
+if ( 3 ~= mpvaGetStatus('mpva:scl5') )
+	error('mpvaGetStatus(): expected INVALID severity')
+end
+
+[ sevr, stat ] = mpvaGetStatus('mpva:scl5');
+if ( sevr ~= 3 | stat ~= 17 )
+	error('mpvaGetStatus(): expected INVALID severity, UDF status')
+end
+
+// suppress warnings
+mpvaSetSeverityWarnLevel(4);
+// reject MINOR
+mpvaSetSeverityWarnLevel(11);
+if ( ~isnan(mpvaGet('mpva:scl5')) )
+	error('mpvaGet should return NAN for PV with INVALID severity')
+end
+
+// now check the different levels
+mpvaPut('mpva:scl1.LSV', 'MINOR');   mpvaPut('mpva:scl1.LOW',-1000);
+mpvaPut('mpva:scl1.HSV', 'MAJOR');   mpvaPut('mpva:scl1.HIGH',1000);
+mpvaPut('mpva:scl1.HHSV','INVALID'); mpvaPut('mpva:scl1.HIHI',2000);
+mpvaPut('mpva:scl2.LSV', 'MINOR');   mpvaPut('mpva:scl2.LOW',+1000);
+mpvaPut('mpva:scl2.HSV', 'MAJOR');   mpvaPut('mpva:scl2.HIGH',2000);
+mpvaPut('mpva:scl2.HHSV','INVALID'); mpvaPut('mpva:scl2.HIHI',3000);
+scls = {{'mpva:scl1';'mpva:scl2'}};
+mpvaPut(scls, [0;0]);
+[sevr, stat, ts ] = mpvaGetStatus(scls);
+// MINOR
+if ( find( sevr ~= [ 0; 1] ) | find ( stat ~= [ 0; 6 ] ) )
+	error('mpvaGetStatus: (testing MINOR) unexpected STAT / SEVR')
+end
+[got, ts1] = mpvaGet(scls);
+if ( find( ts ~= ts1 ) )
+	error('mpvaGetStatus: timestamp inconsistency')
+end
+if ( find( isnan(got) ~= isnan([ 0; %nan]) ) )
+	error('mpvaGet rejection for MINOR FAILED')
+end
+mpvaSetSeverityWarnLevel(12);
+if ( find( isnan(mpvaGet(scls)) ~= isnan([0;0])) )
+	error('mpvaGet rejection for MINOR FAILED to accept')
+end
+
+// MAJOR
+mpvaPut(scls,[1500;1500]);
+
+[sevr, stat] = mpvaGetStatus(scls);
+if ( find( sevr ~= [ 2; 0] ) | find ( stat ~= [ 4; 0 ] ) )
+	error('mpvaGetStatus: (testing MAJOR) unexpected STAT / SEVR')
+end
+if ( find( isnan(mpvaGet(scls)) ~= isnan( [ %nan; 0] )) )
+	error('mpvaGet rejection for MAJOR FAILED')
+end
+mpvaSetSeverityWarnLevel(13);
+if ( find( isnan(mpvaGet(scls)) ~= isnan([0;0])) )
+	error('mpvaGet rejection for MAJOR FAILED to accept')
+end
+
+// INVALID
+mpvaPut(scls,[2500;2500]);
+[sevr, stat] = mpvaGetStatus(scls);
+if ( find( sevr ~= [ 3; 2] ) | find ( stat ~= [ 3; 4 ] ) )
+	error('mpvaGetStatus: (testing INVALID) unexpected STAT / SEVR')
+end
+if ( find( isnan(mpvaGet(scls)) ~= isnan( [ %nan; 0] )) )
+	error('mpvaGet rejection for INVALID FAILED')
+end
+mpvaSetSeverityWarnLevel(14);
+if ( find( isnan(mpvaGet(scls)) ~= isnan([0;0])) )
+	error('mpvaGet rejection for INVALID FAILED to accept')
+end
+// check call with 0 and 1 output arg
+sevr = mpvaGetStatus(scls);
+mpvaGetStatus(scls);
+if ( find( ans ~= sevr ) )
+	error('mpvaGetStatus call with 0 and 1 output arg FAILED')
+end
+
+disp('<<<OK')
+
+if ( mpvaversion > 2 )
+disp('CHECKING mpvaGetUnits')
+
+disp('VERIFY that mpvaGetUnits transfer size is small')
+try
+	mpvaGetUnits('mpva:wavA');
+catch
+	error('FAILED: seems mpvaGetUnits transfers all data')
+end
+disp('<<<OK')
+
+mpvaPut({{'mpva:scl0.EGU';'mpva:scl1.EGU'}},{{'ABER';'XX'}});
+if ( find(~mtlb_strcmp(mpvaGetUnits({{'mpva:scl0';'mpva:scl1'}}),{{'ABER';'XX'}})) )
+	error('mpvaGetUnits test FAILED');
+end
+disp('<<<OK')
+end
+
+disp('CHECKING mpvaSetMonitor/mpvaNewMonitorWait/mpvaNewMonitorValue')
+mpvaSetMonitor('mpva:count')
+mpvaNewMonitorWait('mpva:count')
+[got,ts]=mpvaGet('mpva:count');
+if ( 0 ~= mpvaNewMonitorValue('mpva:count') )
+	error('mpvaNewMonitorValue should be 0; FAILED')
+end
+mpvaNewMonitorWait('mpva:count')
+if ( 1 ~= mpvaNewMonitorValue('mpva:count') )
+	error('mpvaNewMonitorValue should be 1; FAILED')
+end
+[got1,ts1]=mpvaGet('mpva:count');
+if ( 0 ~= mpvaNewMonitorValue('mpva:count') )
+	error('mpvaNewMonitorValue should be 0; FAILED')
+end
+if ( got1~=got+1 )
+	error('MONITOR DIFFERENCE FAILURE')
+end
+if ( abs(real(ts1-ts)-1)>0.2 )
+	error('MONITOR TIMESTAMP DIFFERENCE FAILURE')
+end
+// Now monitor a second PV; verify that we can set monitor twice...
+mpvaSetMonitor({{'mpva:scl1';'mpva:count'}})
+// Verify that blocking on just one monitor works
+mpvaNewMonitorWait({{'mpva:scl1';'mpva:count'}})
+mpvaGet('mpva:count');
+// scl1 is still pending
+try
+	mpvaNewMonitorWait({{'mpva:scl1';'mpva:count'}})
+catch
+	error('blocking on 1 monitor (1 more already pending): FAILED')
+end
+mpvaGet({{'mpva:scl1';'mpva:count'}});
+// now remove 'scl1' monitor again
+mpvaClear('mpva:scl1')
+// Verify that we get an error if we try to monitor a
+// variable w/o monitor
+if ( mpvaversion > 2 )
+mpva_fail=0;
+try
+	mpvaNewMonitorValue({{'mpva:scl1';'mpva:count'}});
+	mpva_fail=1;
+catch
+	if ( mpvaLastError() ~= 20 )
+		error('mpvaNewMonitorValue un-monitored PV error catch check: FAILED')
+	end
+end
+if ( 0 ~= mpva_fail )
+	error('mpvaNewMonitorValue on un-monitored PV should throw error: FAILED')
+end
+else
+	if ( find( mpvaNewMonitorValue({{'mpva:scl1';'mpva:count'}}) ~= [-1;0] ) )
+		error('mpvaNewMonitorValue on un-monitored PV check FAILED')
+	end
+end
+
+disp('<<<OK')
+
+// Test mpvaGetEnumStrings
+if ( mpvaversion >= 3.5 )
+	disp('CHECKING mpvaGetEnumStrings')
+	try
+		enums=mpvaGetEnumStrings({{'mpva:scl0.SCAN';'mpva:scl1.SCAN';'mpva:scl0'}})
+	catch
+		error('mpvaGetEnumStrings() on three PVs FAILED')
+	end
+	if ( prod(size(enums)) ~= 48 | ~prod(mtlb_strcmp(enums(1,:), enums(2,:))) )
+		error('mpvaGetEnumStrings() SCAN enums of two PVs mismatch!')
+	end
+	if ( ~prod(mtlb_strcmp(enums(1,:), {{'Passive',  'Event', 'I/O Intr', '10 second',...
+	                   '5 second', '2 second', '1 second', '.5 second',...
+						'.2 second', '.1 second', '', '',...
+						'', '', '', ''}})) )
+		error('mpvaGetEnumStrings() SCAN enums mismatch')
+	end
+	if ( ~prod(mtlb_strcmp(enums(3,:), {{ '', '', '', '',...
+						'', '', '', '',...
+						'', '', '', '',...
+						'', '', '', ''}})) )
+		error('mpvaGetEnumStrings() on non-enum PV mismatch')
+	end
+	// test a single PV
+	try
+		enums=mpvaGetEnumStrings({{'mpva:scl0.SCAN'}})
+	catch
+		error('mpvaGetEnumStrings() on single PV FAILED')
+	end
+	if ( ~prod(mtlb_strcmp(enums(1,:), {{'Passive',  'Event', 'I/O Intr', '10 second',...
+	                   '5 second', '2 second', '1 second', '.5 second',...
+						'.2 second', '.1 second', '', '',...
+						'', '', '', ''}})) )
+		error('mpvaGetEnumStrings() SCAN enum mismatches')
+	end
+	try
+		enums=mpvaGetEnumStrings({{'mpva:scl0'}})
+	catch
+		error('mpvaGetEnumStrings() on single PV FAILED')
+	end
+	if ( ~prod(mtlb_strcmp(enums(1,:), {{ '', '', '', '',...
+						'', '', '', '',...
+						'', '', '', '',...
+						'', '', '', ''}})) )
+		error('mpvaGetEnumStrings() SCAN enum mismatches')
+	end
+	disp('<<<OK')
+end
+
+// Verify that long integer is not converted to intermediate float
+// (bugfix)
+disp('CHECKING -- readback of long integer w/o loss of precision')
+try
+  if ( mpvaGet('mpva:li1') ~= 2147400000 )
+    error('Long integer readback caused loss of precision')
+  end
+  disp('<<<OK')
+catch
+  error('mpvaGet(mpva:li1) FAILED')
+end
+
+
+if ( mpvaversion > 2 )
+//  NOTE NOTE This MUST be the last test until I know how to catch
+//  a Ctrl-C event under matlab
+	disp('CHECKING CTRL-C HANDLING: press Ctrl-C and verify that the command')
+	disp('                          aborts prior to expiration of a 10s timeout')
+    //  MATLABWARN('WARNING: Cannot catch CTRL-C under some versions of MATLAB from .m file -- ignore possible error message')
+	mpva_fail=0;
+	try
+		mpvaDelay(10)
+		mpva_fail=1;
+	catch
+//  MATLAB NOTE (some versions, 2010a with -nojvm seems to work fine):
+//  CTRL-C aborts entire .m file -- we never get here...
+		if ( mpvaLastError() ~= 9 )
+			error('CTRL-C test FAILED (unknown cause)')
+		end
+	end
+	if ( 0 ~= mpva_fail )
+		error('No Ctrl-C detected')
+	end
+	disp('<<<OK')
+else
+	disp('test CTRL-C handling manually under MPVA version 2')
+end
+
+
+disp('<< ALL DONE')

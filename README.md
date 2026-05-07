@@ -1,95 +1,107 @@
-# Matpva: Integrate EPICS7 into MATLAB using PVAccess for Python (P4P) module
+# MPVA — EPICS PVAccess Interface for SCILAB and MATLAB
 
-## Motivation
-Many scientists in SLAC use MATLAB for data analysis. Thus, they need to use EPICS7 in the MATLAB environment. There were some efforts to integrate EPICS into MATLAB such as labca and MATLAB CA. However, these were specifically designed for the EPICS Channel Access (CA) interface within MATLAB. Consequently, they did not provide comprehensive support for EPICS PVAcess, which offers distinct advantages over CA including handling larger datasets such as NTTable. Therefore, Matpva is developed to integrate EPICS7 into MATLAB based on Python using the P4P module to use PVAcess.
-<br /><br />
+## Overview
 
-## Prerequisites
-- Python: 3.8.13+
-- p4p: 3.5.5+
-- Matlab: 2020a+
+MPVA provides a PVAccess (PVA) protocol interface for SCILAB and MATLAB,
+enabling access to EPICS Process Variables using the modern PVAccess
+protocol (part of EPICS 7). PVAccess supports structured data types,
+atomic multi-field access, and is the recommended protocol for new
+EPICS applications.
 
-> **Note**: While Matpva has been primarily tested in Python 3.8.13, p4p 3.5.5, Matlab 2020a, there is a possibility that certain earlier versions could also function correctly. If you want to generate PVs using either matlab_model_pvs.py or pva_testing_ioc.py scripts, which enable timeStamp updates, it is necessary to utilize p4p version 4.x+.
+This project is derived from the labCA Channel Access interface and has been
+converted to use PVAccess as the underlying transport protocol. The user-facing
+API (function names and calling conventions) remains similar for ease of
+migration.
 
-> Please check Versions of Python Compatible with MATLAB Products by Release: https://www.mathworks.com/support/requirements/python-compatibility.html
+## Available Functions
 
-<br />
+| Function | Description |
+|----------|-------------|
+| `mpvaGet` | Get PV value(s) |
+| `mpvaPut` | Put value(s) to PV(s) |
+| `mpvaPutNoWait` | Put without waiting for completion |
+| `mpvaGetNelem` | Get native element count of PV(s) |
+| `mpvaGetStatus` | Get PV alarm status and severity |
+| `mpvaGetPrecision` | Get PV display precision |
+| `mpvaGetUnits` | Get PV engineering units |
+| `mpvaGetEnumStrings` | Get PV enum string labels |
+| `mpvaGetWarnLimits` | Get PV warning limits |
+| `mpvaGetAlarmLimits` | Get PV alarm limits |
+| `mpvaGetControlLimits` | Get PV control limits |
+| `mpvaGetGraphicLimits` | Get PV graphic/display limits |
+| `mpvaGetRetryCount` | Get connection retry count |
+| `mpvaSetRetryCount` | Set connection retry count |
+| `mpvaGetTimeout` | Get connection timeout |
+| `mpvaSetTimeout` | Set connection timeout |
+| `mpvaSetSeverityWarnLevel` | Set severity warning threshold |
+| `mpvaSetMonitor` | Set up a PV monitor (subscription) |
+| `mpvaNewMonitorValue` | Check if new monitor data is available |
+| `mpvaNewMonitorWait` | Wait for new monitor data |
+| `mpvaClear` | Disconnect/clear PV channel(s) |
+| `mpvaLastError` | Get last error information |
+| `mpvaDelay` | Delay and process background activities |
+| `mpvaDebugOn` | Enable debug output |
+| `mpvaDebugOff` | Disable debug output |
 
-## Function and test scripts
-Python scripts to run Test PVs: pva_testing_ioc.py, matlab_model_pvs.py
+## Quick Start
 
-MATLAB scripts to test mpvaGet() and mpvaPut(): mpvaGet_test_script.m, mpvaPut_test_script.m 
-<br /><br />
+### Run Instructions
 
-## Running test scripts
+ - Point your `PATH` to `bin/<arch>`
+ - Point your `LD_LIBRARY_PATH` to `lib/<arch>` (Linux only)
+ - Your `PATH` (Win32) or `LD_LIBRARY_PATH` (Linux) may also need to
+   include your EPICS base `bin/<arch>` or `lib/<arch>` directory
+
+#### MATLAB
+
+```matlab
+addpath bin/<arch>/mpva
+help mpva
 ```
-python pva_testing_ioc.py    # Most of testing PVs including NTScalar, NTScalarArray, NTTable data type
-python matlab_model_pvs.py   # TWISS NTTable PV
-```
-<br />
 
-## How to use
-1. **mpvaGet**: mpvaGet returns the values of given EPICS PV names.
-```
-[PV, ts, alarm] = mpvaGet(pvname)     # When PV is NTScalar or NTScalarArray type
-[NTTable, ts, alarm, NTStruct] = mpvaGet(pvname)      # When PV is NTTable type     
-```
-<br />
+> **Note:** If MATLAB 2020b hangs, try setting `LD_PRELOAD` before launching:
+> ```
+> setenv LD_PRELOAD <path_to_epics_base>/lib/<arch>/libCom.so
+> ```
 
-2. **mpvaPut**: mpvaPut puts the input values into the designated field in the given EPICs PV name.
-```
-mpvaPut(pvname, value)      # When PV is NTScalar or NTScalarArray type
-mpvaPut(pvname, field1, value1, field2, value2, ...)      # When PV is NTTable type
-mpvaPut(pvname, struct/table)     # When PV is NTTable type
+#### SCILAB
+
+```scilab
+exec bin/<arch>/mpva.sce
+help mpva
 ```
 
-> **Note**: By default, mpvaPut doesn't display anything. If you would like to print out previous and updated PVs, add "mpvaDebugOn" as the last argument input of the function as shown below:
-```
-mpvaPut(pvname, value, "mpvaDebugOn")   # When PV is NTScalar or NTScalarArray type
-mpvaPut(pvname, field1, value1, field2, value2, ..., "mpvaDebugOn")     # When PV is NTTable type
-mpvaPut(pvname, struct/table,  "mpvaDebugOn")       # When PV is NTTable type
-```
-<br />
+## Build From Source
 
-3. **mpvaMonitor**: mpvaMonitor displays the values of given EPICS PV names when it is updated.
-```
-mpvaMonitor(pvname)
-```
-<br />
+### Prerequisites
 
-4. **mpvaSetMonitor**: mpvaSetMonitor subscribes to the given EPICS PV using Python class and stores values in the cache when it is updated.
-The module includes a method (mpvaNewMonitorValue) to check if the PV is updated since it has been subscribed.
-```
-PV = mpvaSetMonitor(pvname)      # Instantiate a ValueCache classs in mpvaSetMonitor.py Python module to monitor a pvname
-```
-<br />
+- **EPICS 7** (or later) — required for PVAccess (`pvAccess`, `pvData` libraries
+  are included in EPICS 7 base)
+- **MATLAB** or **SCILAB**
+- GNU Make
 
-5. **mpvaNewMonitorValue**: mpvaNewMonitorValue returns false if the pvname is not updated and returns true if it is updated. This function is especially valuable when the read operation consumes a significant amount of time, such as when dealing with large arrays or NTTables.
-```
-mpvaNewMonitorValue(PV)          # Return false if the pvname is not updated. Return true if it is updated.
-```
-> **Note**: mpvaNewMonitorValue function only works when mpvaSetMonitor is instantiated.
+### Steps
 
-<br />
+1. Edit `configure/CONFIG` and set target application
+   (`MAKEFOR=MATLAB` or `MAKEFOR=SCILAB`) and optionally the
+   installation directory. You can also enable experimental Ctrl-C
+   handling to interrupt `mpvaGet`/`mpvaPut` operations.
 
-6. **mpvaGetArchived**: mpvaGetArchived returns the archived values of the given PV name for the specified time range.
-```
-[NTTable, ts, alarm, NTStruct] = mpvaGetArchived(pvname, starttime, endtime)      
-```
-> **Note**: mpvaGetArchived function only works with NTTable PVs as they are the only PVAccess PVs being archived (as of 11/14/2023).
+2. Edit `configure/RELEASE` to point to your installation directories of:
+   - EPICS 7 base (must include pvAccess and pvData)
+   - MATLAB
+   - SCILAB
 
-<br />
+   On Win32, also set `MATLIB_SUBDIR` to point to your compiler-dependent
+   libmx/libmex versions.
 
-## To Do
-1. Find a good example of NTNDArray PV and Support NTNDArray type
-2. Add Channel Access PV support in MATLAB
+3. Set the `EPICS_HOST_ARCH` environment variable.
 
-<br />
+4. Run GNU make from this directory.
 
-## Known Issues
-1. If both labCA and p4p modules are used in MATLAB and then exit, it generates a segment violation message while closing the labCA with the message "Entering labca finalizer."
+> Building documentation requires pdflatex, latex2html, and lynx.
+> Documentation build is skipped if any of these tools is missing.
 
-<br />
+## License
 
-## Documentation
-https://confluence.slac.stanford.edu/display/~ktkim/matpva%3A+Integrate+EPICS7+into+MATLAB+using+PVAccess+for+Python+%28P4P%29+module
+See [LICENSE](LICENSE) for details.

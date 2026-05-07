@@ -1,0 +1,54 @@
+// Addinter for EZCA interface
+// for hppa/sun-solaris/linux/dec
+//--------------------------------
+//Scilab functions 
+mpva_funs=[...
+  'mpvaGet';
+  'mpvaPut';
+  'mpvaPutNoWait';
+  'mpvaGetNelem';
+  'mpvaGetControlLimits';
+  'mpvaGetGraphicLimits';
+  'mpvaGetWarnLimits';
+  'mpvaGetAlarmLimits';
+  'mpvaGetStatus';
+  'mpvaGetPrecision';
+  'mpvaGetUnits';
+  'mpvaGetEnumStrings';
+  'mpvaGetRetryCount';
+  'mpvaSetRetryCount';
+  'mpvaGetTimeout';
+  'mpvaSetTimeout';
+  'mpvaDebugOn';
+  'mpvaDebugOff';
+  'mpvaSetSeverityWarnLevel';
+  'mpvaClear';
+  'mpvaSetMonitor';
+  'mpvaNewMonitorValue';
+  'mpvaNewMonitorWait';
+  'mpvaDelay';
+  'mpvaLastError';
+  'lecdrGet';
+  ];
+mpva_top=get_absolute_file_path('THEFILE')+'../../';
+addinter(mpva_top+'THELIB','MPVA',mpva_funs);
+// a hack - addinter doesn't return a library handle
+// (for unloading) -- obtain the last handle...
+mpva_hdl=link('show');
+mpva_hdl=mpva_hdl($);
+if msscanf(getversion(),"scilab-%i") < 5 then
+  if grep(%helps(:,1),mpva_top)== [] then
+    %helps=[%helps;[mpva_top+"html/help", "EPICS CA Interface"]];
+  end
+else
+  if add_help_chapter('MPVA',mpva_top+'jar') then
+	disp('Help files loaded')
+  else
+	disp('Loading help files FAILED')
+  end
+end
+
+function mpvaExit()
+	del_help_chapter('MPVA')
+	ulink(mpva_hdl)
+endfunction

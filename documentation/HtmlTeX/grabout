@@ -1,0 +1,221 @@
+#!/usr/bin/perl
+$printnext=0;
+
+%sizes=(
+	"fiv",1,
+	"six",1,
+	"sev",1,
+	"egt",2,
+	"viii",2,
+	"nin",3,
+	"ten",3,
+	"twl",4,
+	"frtn",5,
+	"svtn",6,
+	"xvii",7,
+	"17",7,
+	"14",5,
+	"12",4,
+	"10",3,
+	"9",3,
+	"8",2,
+	"7",1,
+	"6",1,
+	"5",1,
+);
+
+
+%types=(
+	"rm","!",
+	"it","I",
+	"em","EM",
+	"bf","B",
+	"sl","I",
+	"tt","TT",
+	"mi","I",
+	"sy","U",
+	"ex","!",
+	"sf","!",
+	"r","!",
+	"sy","U",
+	"m","I",
+	"ss","B",
+	);
+
+%sizes2e=(
+	  );
+
+%types2e=(
+	  );
+
+%mathital=(
+	   ";",",",
+	   ":",".",
+	   );
+
+%mathsymb=(
+	   "\000","-",
+	   "\001","*",
+	   "\002","x",
+	   "\003","*",
+	   "\021","subseteq",
+	   "\024","&lt;=",
+	   "\025","&gt;=",
+	   "\041","-&gt;",
+	   "0","'",
+	   "1","infinity",
+	   "2","in",
+	   "3","contains",
+	   "8"," forall ",
+	   "f","{",
+	   "g","}",
+	   "h","&lt;",
+	   "i","&gt;",
+	   "j","|",
+	   "k","||"
+	   );
+
+%mathextn=(
+	   "\120","Sum",
+	   "\130","<FONT SIZE=+1>Sum</FONT>",
+	   );
+
+%fonts=(
+	"mi",*mathital,
+	"m",*mathital,
+	"sy",*mathsymb,
+	"ex",*mathextn,
+	);
+
+%entities=(
+	   "<","&lt;",
+	   ">","&gt;",
+	   "&","&amp;",
+	   '"',"&quot;",
+	   );
+
+$posssizes=join("|",keys %sizes);
+$posstypes=join("|",keys %types);
+
+
+print STDERR "sizes : $posssizes types : $posstypes\n";
+
+$size="ten";
+$type="rm";
+*font=$fonts{"rm"};
+$isfont = 0;
+
+print "<FONT SIZE=1>";
+$reading = 0;
+$cont = 0;
+
+while(<>){
+    chop;
+    if (length >= 78 && $reading) {
+	$cont = 1;
+	next;
+    } 
+    if ($cont) { $cont = 0; next; }
+    if (!$reading) { 
+	if (/Completed box being/) { $reading = 1; }
+	next;
+	}
+    
+    if (/^[ \t\n]*$/) {
+	$reading = 0;
+	# print "\n<HR>\n";
+	next;
+    }
+    if (/^\.+\\O[TM][1LS]\/cm($posstypes)\/[^\/]*\/[^\/]*\/($posssizes)[^ ]*\s*(.*)$/)
+      {
+	  if (($2 ne $size) || ($1 ne $type)) {
+
+	       if (1 || $2 ne $size) { print "</FONT>"; }
+
+	       if ($1 ne $type) {
+		   if ($types{$type} ne "!") {
+		       print "</".$types{$type}.">";}
+		   if ($types{$1} ne "!") {
+		       print "<".$types{$1}.">";}
+	       }
+	       
+	       if (1 || $2 ne $size) { print "<FONT SIZE=".$sizes{$2}.">"; }
+
+	       $type = $1;
+	       $size = $2;
+	       *font = $fonts{$1};
+	       $isfont = defined $fonts{$1};
+	   }
+	   $out = $3;
+	   if ($out =~/\(ligature ([^)]+)/)  { print $1; next; }
+           if ($out =~/\^\^(.)/) { $out = pack("c",ord($1)-ord("A")+1); }
+           if ($isfont && defined($font{$out})) { print $font{$out}; }
+	   else { if (defined($entities{$out})) { print $entities{$out};}
+	          else {print $out; }
+		}
+           next;
+       }
+	  
+    
+    if (/^\.+\\($posssizes)($posstypes)\s*(.*)$/) 
+       {
+	   if (($1 ne $size) || ($2 ne $type)) {
+
+	       if (1 || $1 ne $size) { print "</FONT>"; }
+
+	       if ($2 ne $type) {
+		   if ($types{$type} ne "!") {
+		       print "</".$types{$type}.">";}
+		   if ($types{$2} ne "!") {
+		       print "<".$types{$2}.">";}
+	       }
+	       
+	       if (1 || $1 ne $size) { print "<FONT SIZE=".$sizes{$1}.">"; }
+
+	       $type = $2;
+	       $size = $1;
+	       *font = $fonts{$2};
+	       $isfont = defined $fonts{$2};
+	   }
+	   $out = $3;
+	   if ($out =~/\(ligature ([^)]+)/)  { print $1; next; }
+           if ($out =~/\^\^(.)/) { $out = pack("c",ord($1)-ord("A")+1); }
+           if ($isfont && defined($font{$out})) { print $font{$out}; }
+	   else { if (defined($entities{$out})) { print $entities{$out};}
+	          else {print $out; }
+		}
+           next;
+       }
+
+    if (/\\glue\(\\leftskip\) 0\.0 plus 1\.0fil/) { print "<CENTER>"; next; }
+    if (/\\glue\(\\rightskip\) 0\.0 plus 1\.0fil/) { print "</CENTER>"; next; }
+    if (/\\glue\(\\baselineskip\)/) { print "\n"; next; }
+    if (/\\glue/) {print " "; next;}
+
+    if (/\\(kern|penalty|discretionary|hbox|vbox|math|write|rule|numb|special\{[^H]|mark|c\@|p\@|\ps\@)/) {next;} 
+
+    if (/\\special\{HTML:([^}]*)\}/) {
+       $_ = $1;
+       s/HTMLHASH/\#/;
+       print; 
+       if ($_ eq "<p>") {print "\n\n";}
+       next;
+    }
+    if (/\\\\p($posstypes)\\\@($posssizes)pt\s*(.*)$/) {
+	$_ = ".\\$2$1 $3";
+        redo;
+    }
+
+#if (/Underfull/ || /Overfull/) {  # skip to next page
+#    while(<>) {
+#	if (/Completed box being/) {
+#	    print "\n<HR>\n";
+#	    last;
+#	}
+#    }
+#    next;
+#}
+    # if (!/^\.*\\/) {next;}
+
+   print STDERR "Unknown output : $_\n";
+}
