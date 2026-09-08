@@ -129,16 +129,16 @@ elseif (contains(nt_id, "NTScalar"))
 
 % NTTable data type PVs    
 elseif (contains(nt_id, "NTTable"))
-    a           = struct(todict(PV)).labels;
-    aa          = string(cell(a));
-    numElement  = numel(aa);
+    cln_tmp      = todict(PV).get('value').keys();
+    column_names = string(cell(py.list(cln_tmp)));
+    numElement   = numel(column_names);
     
     type_struct = struct(py.dict(struct(py.dict(type(PV))).value));
     val_struct  = struct(struct(todict(PV)).value);
     
     for iElement = 1 : numElement
-        e_type = type_struct.(aa(iElement));
-        v      = val_struct.(aa(iElement));
+        e_type = type_struct.(column_names(iElement));
+        v      = val_struct.(column_names(iElement));
                         
         if (e_type == "ai")
             vv  = int32(py.array.array('i', v));
@@ -180,12 +180,12 @@ elseif (contains(nt_id, "NTTable"))
         end
         
         % Old method
-        % eval("NTStruct." + aa(iElement) + "= vv;");
-        % eval("NTStruct2." + aa(iElement) + "= vv2;");
+        % eval("NTStruct." + column_names(iElement) + "= vv;");
+        % eval("NTStruct2." + column_names(iElement) + "= vv2;");
         
-        NTStruct.(aa(iElement)) = vv;
+        NTStruct.(column_names(iElement)) = vv;
         % To make NTTable output with each element data in a column instead of in a row        
-        NTStruct2.(aa(iElement)) = vv2;
+        NTStruct2.(column_names(iElement)) = vv2;
     end
     
     NTTable      = struct2table(NTStruct2);
